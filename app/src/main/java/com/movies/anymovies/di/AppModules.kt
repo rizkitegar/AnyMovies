@@ -4,6 +4,7 @@ import com.movies.anymovies.core.common.di.commonModule
 import com.movies.anymovies.core.database.di.databaseModule
 import com.movies.anymovies.core.network.di.networkModule
 import com.movies.anymovies.feature.detail.data.di.detailDataModule
+import com.movies.anymovies.feature.detail.presentation.di.detailPresentationModule
 import com.movies.anymovies.feature.genre.data.di.genreDataModule
 import com.movies.anymovies.feature.genre.presentation.di.genrePresentationModule
 import com.movies.anymovies.feature.movies.data.di.moviesDataModule
@@ -19,4 +20,5 @@ val appModules: List<Module> = listOf(
     moviesDataModule,
     moviesPresentationModule,
     detailDataModule,
+    detailPresentationModule,
 )

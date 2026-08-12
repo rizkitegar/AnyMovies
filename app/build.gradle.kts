@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":feature:movies:presentation"))
     implementation(project(":feature:detail:domain"))
     implementation(project(":feature:detail:data"))
+    implementation(project(":feature:detail:presentation"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
