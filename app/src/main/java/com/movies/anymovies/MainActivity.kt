@@ -24,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.movies.anymovies.navigation.Route
 import com.movies.anymovies.feature.genre.presentation.GenreListScreen
+import com.movies.anymovies.feature.movies.presentation.MovieListScreen
 import com.movies.anymovies.ui.theme.AnyMoviesTheme
 
 class MainActivity : ComponentActivity() {
@@ -73,9 +74,10 @@ private fun AnyMoviesNavHost(
         }
         composable<Route.MovieList> { backStackEntry ->
             val route = backStackEntry.toRoute<Route.MovieList>()
-            MovieListPlaceholder(
+            MovieListScreen(
+                genreId = route.genreId,
                 genreName = route.genreName,
-                onMovieClick = { navController.navigate(Route.MovieDetail(movieId = 550)) },
+                onMovieClick = { movieId -> navController.navigate(Route.MovieDetail(movieId = movieId)) },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -93,23 +95,6 @@ private fun AnyMoviesNavHost(
                 movieId = route.movieId,
                 onBack = { navController.popBackStack() }
             )
-        }
-    }
-}
-
-@Composable
-private fun MovieListPlaceholder(
-    genreName: String,
-    onMovieClick: () -> Unit,
-    onBack: () -> Unit
-) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "Route.MovieList: $genreName")
-        Button(onClick = onMovieClick) {
-            Text("Open movie")
-        }
-        Button(onClick = onBack) {
-            Text("Back")
         }
     }
 }

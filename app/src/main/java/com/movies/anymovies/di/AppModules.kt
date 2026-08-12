@@ -6,6 +6,7 @@ import com.movies.anymovies.core.network.di.networkModule
 import com.movies.anymovies.feature.genre.data.di.genreDataModule
 import com.movies.anymovies.feature.genre.presentation.di.genrePresentationModule
 import com.movies.anymovies.feature.movies.data.di.moviesDataModule
+import com.movies.anymovies.feature.movies.presentation.di.moviesPresentationModule
 import org.koin.core.module.Module
 
 val appModules: List<Module> = listOf(
@@ -15,4 +16,5 @@ val appModules: List<Module> = listOf(
     genreDataModule,
     genrePresentationModule,
     moviesDataModule,
+    moviesPresentationModule,
 )

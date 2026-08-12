@@ -8,5 +8,7 @@ public fun createAppDatabase(context: Context): AppDatabase {
         context.applicationContext,
         AppDatabase::class.java,
         DATABASE_NAME,
-    ).build()
+    )
+        .fallbackToDestructiveMigration(dropAllTables = true)
+        .build()
 }
