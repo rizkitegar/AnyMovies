@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.retrofit.kotlinx.serialization.converter)
     api(libs.okhttp.core)
     debugImplementation(libs.okhttp.logging.interceptor)
+    implementation(libs.koin.android)
 
     debugImplementation(libs.chucker)
     releaseImplementation(libs.chucker.noop)

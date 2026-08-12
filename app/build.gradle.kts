@@ -38,6 +38,12 @@ android {
 
 dependencies {
     implementation(project(":navigation"))
+    implementation(project(":core:common"))
+    implementation(project(":core:network"))
+    implementation(project(":core:database"))
+    implementation(project(":feature:genre:domain"))
+    implementation(project(":feature:genre:data"))
+    implementation(project(":feature:genre:presentation"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

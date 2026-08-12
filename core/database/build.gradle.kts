@@ -32,6 +32,7 @@ room {
 
 dependencies {
     implementation(libs.androidx.room.runtime)
+    implementation(libs.koin.android)
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.androidx.room.testing)

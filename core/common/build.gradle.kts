@@ -9,6 +9,7 @@ kotlin {
 
 dependencies {
     api(libs.kotlinx.coroutines.core)
+    implementation(libs.koin.core)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
