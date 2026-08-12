@@ -29,6 +29,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -53,6 +55,7 @@ import com.movies.anymovies.core.common.error.DomainError
 import com.movies.anymovies.core.common.error.toUserMessage
 import com.movies.anymovies.feature.detail.presentation.model.GenreUiModel
 import com.movies.anymovies.feature.detail.presentation.model.MovieDetailUiModel
+import com.movies.anymovies.feature.detail.presentation.model.VideoUiModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -221,6 +224,8 @@ private fun MovieDetailSuccess(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
+    var playingVideoKey by rememberSaveable { mutableStateOf<String?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Derived so recomposition only happens when the collapse fraction
     // actually changes, not on every raw scroll pixel.
@@ -235,8 +240,19 @@ private fun MovieDetailSuccess(
 
     Box(modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.SUCCESS)) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-            item(key = "header") { MovieDetailHeader(movie = movie) }
-            item(key = "body") { MovieDetailBody(movie = movie, onSeeAllReviews = onSeeAllReviews) }
+            item(key = "header") {
+                MovieDetailHeader(
+                    movie = movie,
+                    onPlayTrailer = movie.selectedTrailerKey?.let { key -> { playingVideoKey = key } },
+                )
+            }
+            item(key = "body") {
+                MovieDetailBody(
+                    movie = movie,
+                    onSeeAllReviews = onSeeAllReviews,
+                    onVideoClick = { playingVideoKey = it.key },
+                )
+            }
         }
         CollapsingTopBar(
             title = movie.title,
@@ -244,6 +260,22 @@ private fun MovieDetailSuccess(
             onBack = onBack,
             modifier = Modifier.align(Alignment.TopCenter),
         )
+
+        val currentVideoKey = playingVideoKey
+        if (currentVideoKey != null) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.9f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                TrailerPlayer(
+                    videoKey = currentVideoKey,
+                    onClose = { playingVideoKey = null },
+                    snackbarHostState = snackbarHostState,
+                )
+            }
+        }
+
+        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
@@ -284,7 +316,11 @@ private fun BackButton(onBack: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun MovieDetailHeader(movie: MovieDetailUiModel, modifier: Modifier = Modifier) {
+private fun MovieDetailHeader(
+    movie: MovieDetailUiModel,
+    onPlayTrailer: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
     Box(modifier = modifier.fillMaxWidth().height(HeaderHeight)) {
         if (movie.headerImageUrl != null) {
             AsyncImage(
@@ -304,6 +340,9 @@ private fun MovieDetailHeader(movie: MovieDetailUiModel, modifier: Modifier = Mo
                 )
             }
         }
+        if (onPlayTrailer != null) {
+            TrailerPlayButton(onClick = onPlayTrailer, modifier = Modifier.align(Alignment.Center))
+        }
     }
 }
 
@@ -311,6 +350,7 @@ private fun MovieDetailHeader(movie: MovieDetailUiModel, modifier: Modifier = Mo
 private fun MovieDetailBody(
     movie: MovieDetailUiModel,
     onSeeAllReviews: () -> Unit,
+    onVideoClick: (VideoUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth().padding(16.dp)) {
@@ -347,8 +387,7 @@ private fun MovieDetailBody(
         ExpandableOverview(text = movie.overviewLabel)
 
         Spacer(modifier = Modifier.height(24.dp))
-        // TODO(Phase 4): render VideoSection here once the trailer feature ships.
-        VideoSection(movieId = movie.id)
+        VideoSection(videos = movie.videos, onVideoClick = onVideoClick)
 
         Spacer(modifier = Modifier.height(24.dp))
         // TODO(Phase 5): render ReviewsSection here once the reviews feature ships.
@@ -409,12 +448,6 @@ private fun ExpandableOverview(text: String, modifier: Modifier = Modifier) {
             )
         }
     }
-}
-
-@Composable
-private fun VideoSection(movieId: Int, modifier: Modifier = Modifier) {
-    // Placeholder slot — trailer playback and the video thumbnail row ship in
-    // a later milestone. Intentionally renders nothing for now.
 }
 
 @Composable

@@ -2,9 +2,12 @@ package com.movies.anymovies.feature.detail.presentation.model
 
 import com.movies.anymovies.feature.detail.domain.model.Genre
 import com.movies.anymovies.feature.detail.domain.model.MovieDetail
+import com.movies.anymovies.feature.detail.domain.model.Video
+import java.time.Instant
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MovieDetailUiModelTest {
@@ -108,5 +111,42 @@ class MovieDetailUiModelTest {
     fun `zero votes still render a rating label rather than hiding it`() {
         val detail = fullDetail().copy(voteAverage = 0.0, voteCount = 0)
         assertEquals("0.0 · 0 votes", detail.toUiModel().ratingLabel)
+    }
+
+    @Test
+    fun `no videos yields an empty video list and no selected trailer`() {
+        val uiModel = fullDetail().toUiModel()
+
+        assertTrue(uiModel.videos.isEmpty())
+        assertNull(uiModel.selectedTrailerKey)
+    }
+
+    @Test
+    fun `selected trailer key follows the official trailer priority`() {
+        val teaser = Video(
+            id = "1",
+            key = "teaserKey",
+            name = "Teaser",
+            site = "YouTube",
+            type = "Teaser",
+            official = false,
+            publishedAt = Instant.parse("2026-01-01T00:00:00Z"),
+        )
+        val officialTrailer = Video(
+            id = "2",
+            key = "trailerKey",
+            name = "Official Trailer",
+            site = "YouTube",
+            type = "Trailer",
+            official = true,
+            publishedAt = Instant.parse("2026-02-01T00:00:00Z"),
+        )
+        val detail = fullDetail().copy(videos = listOf(teaser, officialTrailer))
+
+        val uiModel = detail.toUiModel()
+
+        assertEquals("trailerKey", uiModel.selectedTrailerKey)
+        assertEquals(2, uiModel.videos.size)
+        assertEquals("https://img.youtube.com/vi/trailerKey/mqdefault.jpg", uiModel.videos[1].thumbnailUrl)
     }
 }

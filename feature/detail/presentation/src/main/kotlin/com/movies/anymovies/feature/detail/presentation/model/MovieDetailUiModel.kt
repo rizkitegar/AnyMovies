@@ -2,6 +2,8 @@ package com.movies.anymovies.feature.detail.presentation.model
 
 import androidx.compose.runtime.Immutable
 import com.movies.anymovies.feature.detail.domain.model.MovieDetail
+import com.movies.anymovies.feature.detail.domain.model.Video
+import com.movies.anymovies.feature.detail.domain.usecase.SelectTrailerUseCase
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -12,6 +14,14 @@ import kotlinx.collections.immutable.toImmutableList
 public data class GenreUiModel(
     val id: Int,
     val name: String,
+)
+
+@Immutable
+public data class VideoUiModel(
+    val id: String,
+    val key: String,
+    val name: String,
+    val thumbnailUrl: String,
 )
 
 @Immutable
@@ -29,6 +39,8 @@ public data class MovieDetailUiModel(
     val status: String,
     val originalLanguageLabel: String,
     val homepage: String?,
+    val videos: ImmutableList<VideoUiModel>,
+    val selectedTrailerKey: String?,
 )
 
 private val releaseDateFormatter: DateTimeFormatter =
@@ -36,7 +48,10 @@ private val releaseDateFormatter: DateTimeFormatter =
 
 private const val NO_SYNOPSIS_LABEL = "No synopsis available"
 
+private val selectTrailerUseCase = SelectTrailerUseCase()
+
 public fun MovieDetail.toUiModel(): MovieDetailUiModel {
+    val youtubeVideos = videos.filter { it.site == "YouTube" }
     return MovieDetailUiModel(
         id = id,
         title = title,
@@ -51,8 +66,17 @@ public fun MovieDetail.toUiModel(): MovieDetailUiModel {
         status = status,
         originalLanguageLabel = originalLanguage.uppercase(Locale.US),
         homepage = homepage?.takeIf { it.isNotBlank() },
+        videos = youtubeVideos.map { it.toUiModel() }.toImmutableList(),
+        selectedTrailerKey = selectTrailerUseCase(videos)?.key,
     )
 }
+
+private fun Video.toUiModel(): VideoUiModel = VideoUiModel(
+    id = id,
+    key = key,
+    name = name,
+    thumbnailUrl = "https://img.youtube.com/vi/$key/mqdefault.jpg",
+)
 
 private fun formatRuntime(minutes: Int): String {
     val hours = minutes / 60

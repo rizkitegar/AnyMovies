@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.android.youtube.player)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
