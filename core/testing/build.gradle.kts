@@ -17,3 +17,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
+dependencies {
+    implementation(libs.koin.core)
+    implementation(libs.koin.test)
+    implementation(libs.koin.test.junit4)
+    implementation(libs.junit)
+}
