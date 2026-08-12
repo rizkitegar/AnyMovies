@@ -7,6 +7,9 @@ import com.movies.anymovies.core.database.genre.GenreEntity
 import com.movies.anymovies.core.database.movie.MovieDao
 import com.movies.anymovies.core.database.movie.MovieEntity
 import com.movies.anymovies.core.database.movie.MovieRemoteKeyEntity
+import com.movies.anymovies.core.database.moviedetail.MovieDetailDao
+import com.movies.anymovies.core.database.moviedetail.MovieDetailEntity
+import com.movies.anymovies.core.database.moviedetail.VideoEntity
 import com.movies.anymovies.core.database.placeholder.PlaceholderDao
 import com.movies.anymovies.core.database.placeholder.PlaceholderEntity
 
@@ -16,8 +19,10 @@ import com.movies.anymovies.core.database.placeholder.PlaceholderEntity
         GenreEntity::class,
         MovieEntity::class,
         MovieRemoteKeyEntity::class,
+        MovieDetailEntity::class,
+        VideoEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 public abstract class AppDatabase : RoomDatabase() {
@@ -26,4 +31,6 @@ public abstract class AppDatabase : RoomDatabase() {
     public abstract fun genreDao(): GenreDao
 
     public abstract fun movieDao(): MovieDao
+
+    public abstract fun movieDetailDao(): MovieDetailDao
 }
