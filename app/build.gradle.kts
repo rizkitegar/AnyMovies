@@ -44,6 +44,8 @@ dependencies {
     implementation(project(":feature:genre:domain"))
     implementation(project(":feature:genre:data"))
     implementation(project(":feature:genre:presentation"))
+    implementation(project(":feature:movies:domain"))
+    implementation(project(":feature:movies:data"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
