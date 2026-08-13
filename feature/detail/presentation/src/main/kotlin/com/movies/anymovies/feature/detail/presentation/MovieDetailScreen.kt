@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -51,15 +53,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import com.movies.anymovies.core.common.error.DomainError
 import com.movies.anymovies.core.ui.R as CoreUiR
 import com.movies.anymovies.core.ui.error.toUserMessage
+import com.movies.anymovies.core.ui.state.AppendFooter
+import com.movies.anymovies.core.ui.state.AppendFooterState
+import com.movies.anymovies.core.ui.state.EmptyState
 import com.movies.anymovies.core.ui.state.ErrorState
 import com.movies.anymovies.core.ui.state.LoadingShimmer
 import com.movies.anymovies.core.ui.state.ShimmerBlock
+import com.movies.anymovies.feature.detail.domain.model.ReviewLoadException
 import com.movies.anymovies.feature.detail.presentation.model.GenreUiModel
 import com.movies.anymovies.feature.detail.presentation.model.MovieDetailUiModel
+import com.movies.anymovies.feature.detail.presentation.model.ReviewUiModel
 import com.movies.anymovies.feature.detail.presentation.model.VideoUiModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -68,8 +80,11 @@ import org.koin.core.parameter.parametersOf
 private val HeaderHeight = 280.dp
 private val PosterWidth = 96.dp
 private val PosterHeight = 144.dp
+private val AvatarSize = 40.dp
+private val ReviewShimmerRowHeight = 56.dp
 private const val HEADER_COLLAPSE_RANGE_PX = 400f
 private const val OVERVIEW_COLLAPSED_MAX_LINES = 5
+private const val REVIEW_CONTENT_COLLAPSED_MAX_LINES = 6
 
 public object MovieDetailTestTags {
     public const val LOADING: String = "movie_detail_loading"
@@ -79,22 +94,39 @@ public object MovieDetailTestTags {
     public const val RETRY_BUTTON: String = "movie_detail_retry"
     public const val BACK_BUTTON: String = "movie_detail_back"
     public const val OVERVIEW_TOGGLE: String = "movie_detail_overview_toggle"
+    public const val CONTENT_LIST: String = "movie_detail_content_list"
+    public const val REVIEWS_HEADER: String = "movie_detail_reviews_header"
+    public const val REVIEWS_LOADING: String = "movie_detail_reviews_loading"
+    public const val REVIEWS_ERROR: String = "movie_detail_reviews_error"
+    public const val REVIEWS_RETRY_BUTTON: String = "movie_detail_reviews_retry"
+    public const val REVIEWS_EMPTY: String = "movie_detail_reviews_empty"
+    public const val REVIEWS_APPEND_LOADING: String = "movie_detail_reviews_append_loading"
+    public const val REVIEWS_APPEND_ERROR: String = "movie_detail_reviews_append_error"
+    public const val REVIEWS_APPEND_RETRY_BUTTON: String = "movie_detail_reviews_append_retry"
+    public const val REVIEWS_END_REACHED: String = "movie_detail_reviews_end_reached"
+
+    public fun reviewItem(id: String): String = "movie_detail_review_item_$id"
+    public fun reviewRatingChip(id: String): String = "movie_detail_review_rating_$id"
+    public fun reviewContentToggle(id: String): String = "movie_detail_review_toggle_$id"
 }
+
+private fun Throwable.toReviewDomainError(): DomainError = (this as? ReviewLoadException)?.domainError ?: DomainError.Unknown
 
 @Composable
 public fun MovieDetailScreen(
     movieId: Int,
     onBack: () -> Unit,
-    onSeeAllReviews: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MovieDetailViewModel = koinViewModel(parameters = { parametersOf(movieId) }),
+    reviewsViewModel: MovieReviewsViewModel = koinViewModel(parameters = { parametersOf(movieId) }),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lazyPagingReviews = reviewsViewModel.reviewsPagingData.collectAsLazyPagingItems()
     MovieDetailContent(
         state = uiState,
+        lazyPagingReviews = lazyPagingReviews,
         onBack = onBack,
         onRetry = viewModel::onRetry,
-        onSeeAllReviews = onSeeAllReviews,
         modifier = modifier,
     )
 }
@@ -102,9 +134,9 @@ public fun MovieDetailScreen(
 @Composable
 internal fun MovieDetailContent(
     state: MovieDetailUiState,
+    lazyPagingReviews: LazyPagingItems<ReviewUiModel>,
     onBack: () -> Unit,
     onRetry: () -> Unit,
-    onSeeAllReviews: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (state) {
@@ -124,8 +156,8 @@ internal fun MovieDetailContent(
 
         is MovieDetailUiState.Success -> MovieDetailSuccess(
             movie = state.movie,
+            lazyPagingReviews = lazyPagingReviews,
             onBack = onBack,
-            onSeeAllReviews = onSeeAllReviews,
             modifier = modifier,
         )
     }
@@ -186,8 +218,8 @@ private fun MovieDetailError(
 @Composable
 private fun MovieDetailSuccess(
     movie: MovieDetailUiModel,
+    lazyPagingReviews: LazyPagingItems<ReviewUiModel>,
     onBack: () -> Unit,
-    onSeeAllReviews: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
@@ -223,17 +255,14 @@ private fun MovieDetailSuccess(
     }
 
     Box(modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.SUCCESS)) {
-        LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().testTag(MovieDetailTestTags.CONTENT_LIST)) {
             item(key = "header", contentType = "header") {
                 MovieDetailHeader(movie = movie, onPlayTrailer = onPlayTrailer)
             }
             item(key = "body", contentType = "body") {
-                MovieDetailBody(
-                    movie = movie,
-                    onSeeAllReviews = onSeeAllReviews,
-                    onVideoClick = onVideoClick,
-                )
+                MovieDetailBody(movie = movie, onVideoClick = onVideoClick)
             }
+            reviewsSection(lazyPagingReviews)
         }
         CollapsingTopBar(
             title = movie.title,
@@ -316,7 +345,6 @@ private fun MovieDetailHeader(
 @Composable
 private fun MovieDetailBody(
     movie: MovieDetailUiModel,
-    onSeeAllReviews: () -> Unit,
     onVideoClick: (VideoUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -355,9 +383,6 @@ private fun MovieDetailBody(
 
         Spacer(modifier = Modifier.height(24.dp))
         VideoSection(videos = movie.videos, onVideoClick = onVideoClick)
-
-        Spacer(modifier = Modifier.height(24.dp))
-        ReviewsSection(movieId = movie.id, onSeeAllReviews = onSeeAllReviews)
     }
 }
 
@@ -410,6 +435,196 @@ private fun ExpandableOverview(text: String, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .padding(top = 4.dp)
                     .testTag(MovieDetailTestTags.OVERVIEW_TOGGLE)
+                    .clickable { expanded = !expanded },
+            )
+        }
+    }
+}
+
+/**
+ * Appends the reviews block directly into the caller's LazyColumn — a header item, then either
+ * the review items + append footer, or a single loading/error/empty item in their place. Reviews
+ * must never be a nested scrollable (Compose does not support LazyColumn-in-LazyColumn), so this
+ * emits into the same [LazyListScope] as the rest of Movie Detail rather than owning its own list.
+ */
+private fun LazyListScope.reviewsSection(lazyPagingItems: LazyPagingItems<ReviewUiModel>) {
+    item(key = "reviews_header", contentType = "reviews_header") {
+        Text(
+            text = stringResource(R.string.reviews_section_heading),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 16.dp).testTag(MovieDetailTestTags.REVIEWS_HEADER),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    val refreshState = lazyPagingItems.loadState.refresh
+    when {
+        refreshState is LoadState.Loading && lazyPagingItems.itemCount == 0 -> {
+            item(key = "reviews_loading", contentType = "reviews_loading") {
+                LoadingShimmer(
+                    modifier = Modifier.padding(horizontal = 16.dp).testTag(MovieDetailTestTags.REVIEWS_LOADING),
+                ) {
+                    repeat(2) {
+                        ShimmerBlock(modifier = Modifier.fillMaxWidth().height(ReviewShimmerRowHeight))
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
+            }
+        }
+
+        refreshState is LoadState.Error && lazyPagingItems.itemCount == 0 -> {
+            item(key = "reviews_error", contentType = "reviews_error") {
+                ErrorState(
+                    message = refreshState.error.toReviewDomainError().toUserMessage(),
+                    actionLabel = stringResource(CoreUiR.string.core_ui_retry),
+                    onAction = { lazyPagingItems.retry() },
+                    actionModifier = Modifier.testTag(MovieDetailTestTags.REVIEWS_RETRY_BUTTON),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp).testTag(MovieDetailTestTags.REVIEWS_ERROR),
+                )
+            }
+        }
+
+        lazyPagingItems.itemCount == 0 && refreshState is LoadState.NotLoading -> {
+            item(key = "reviews_empty", contentType = "reviews_empty") {
+                EmptyState(
+                    message = stringResource(R.string.reviews_empty_state),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp).testTag(MovieDetailTestTags.REVIEWS_EMPTY),
+                )
+            }
+        }
+
+        else -> {
+            items(
+                count = lazyPagingItems.itemCount,
+                key = lazyPagingItems.itemKey { it.id },
+                contentType = lazyPagingItems.itemContentType { "review" },
+            ) { index ->
+                val review = lazyPagingItems[index]
+                if (review != null) {
+                    ReviewCard(
+                        review = review,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .testTag(MovieDetailTestTags.reviewItem(review.id)),
+                    )
+                }
+            }
+            item(key = "reviews_footer", contentType = "reviews_footer") {
+                val appendState = lazyPagingItems.loadState.append
+                val footerState = when {
+                    appendState is LoadState.Error -> AppendFooterState.ERROR
+                    appendState is LoadState.Loading -> AppendFooterState.LOADING
+                    appendState is LoadState.NotLoading && appendState.endOfPaginationReached -> AppendFooterState.END_REACHED
+                    else -> AppendFooterState.IDLE
+                }
+                val footerTag = when (footerState) {
+                    AppendFooterState.ERROR -> MovieDetailTestTags.REVIEWS_APPEND_ERROR
+                    AppendFooterState.LOADING -> MovieDetailTestTags.REVIEWS_APPEND_LOADING
+                    AppendFooterState.END_REACHED -> MovieDetailTestTags.REVIEWS_END_REACHED
+                    AppendFooterState.IDLE -> ""
+                }
+                AppendFooter(
+                    state = footerState,
+                    errorMessage = (appendState as? LoadState.Error)?.error?.toReviewDomainError()?.toUserMessage().orEmpty(),
+                    onRetry = { lazyPagingItems.retry() },
+                    retryModifier = Modifier.testTag(MovieDetailTestTags.REVIEWS_APPEND_RETRY_BUTTON),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).testTag(footerTag),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun ReviewCard(review: ReviewUiModel, modifier: Modifier = Modifier) {
+    Row(modifier = modifier.fillMaxWidth()) {
+        ReviewAvatar(avatarUrl = review.avatarUrl, initial = review.avatarInitial)
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = review.author,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                if (review.ratingLabel != null) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    RatingChip(
+                        label = review.ratingLabel,
+                        modifier = Modifier.testTag(MovieDetailTestTags.reviewRatingChip(review.id)),
+                    )
+                }
+            }
+            Text(text = review.createdDateLabel, style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.height(4.dp))
+            ExpandableReviewContent(
+                reviewId = review.id,
+                text = review.content,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReviewAvatar(avatarUrl: String?, initial: String, modifier: Modifier = Modifier) {
+    if (avatarUrl != null) {
+        AsyncImage(
+            model = avatarUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = modifier.size(AvatarSize).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceVariant),
+        )
+    } else {
+        Box(
+            modifier = modifier
+                .size(AvatarSize)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.secondaryContainer),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = initial, style = MaterialTheme.typography.titleSmall)
+        }
+    }
+}
+
+@Composable
+private fun RatingChip(label: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+    ) {
+        Text(text = label, style = MaterialTheme.typography.labelMedium)
+    }
+}
+
+@Composable
+private fun ExpandableReviewContent(reviewId: String, text: String, modifier: Modifier = Modifier) {
+    var expanded by rememberSaveable(reviewId) { mutableStateOf(false) }
+    var isOverflowing by remember(reviewId) { mutableStateOf(false) }
+
+    Column(modifier = modifier) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = if (expanded) Int.MAX_VALUE else REVIEW_CONTENT_COLLAPSED_MAX_LINES,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = { result ->
+                if (!expanded) isOverflowing = result.didOverflowHeight || result.hasVisualOverflow
+            },
+        )
+        if (isOverflowing || expanded) {
+            Text(
+                text = if (expanded) stringResource(R.string.detail_read_less) else stringResource(R.string.detail_read_more),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .testTag(MovieDetailTestTags.reviewContentToggle(reviewId))
                     .clickable { expanded = !expanded },
             )
         }

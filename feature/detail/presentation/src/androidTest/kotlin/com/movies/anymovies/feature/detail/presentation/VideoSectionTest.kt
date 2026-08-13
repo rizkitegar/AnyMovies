@@ -20,11 +20,15 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.test.core.app.ApplicationProvider
 import com.movies.anymovies.feature.detail.domain.model.Genre
 import com.movies.anymovies.feature.detail.domain.model.MovieDetail
+import com.movies.anymovies.feature.detail.presentation.model.ReviewUiModel
 import com.movies.anymovies.feature.detail.presentation.model.toUiModel
 import java.time.LocalDate
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import org.junit.Rule
 import org.junit.Test
@@ -55,11 +59,12 @@ class VideoSectionTest {
     @Test
     fun noVideosHidesThePlayAffordanceAndTheThumbnailRow() {
         composeRule.setContent {
+            val emptyReviews = flowOf(PagingData.empty<ReviewUiModel>()).collectAsLazyPagingItems()
             MovieDetailContent(
                 state = MovieDetailUiState.Success(movie = movieDetail.toUiModel()),
+                lazyPagingReviews = emptyReviews,
                 onBack = {},
                 onRetry = {},
-                onSeeAllReviews = {},
             )
         }
 

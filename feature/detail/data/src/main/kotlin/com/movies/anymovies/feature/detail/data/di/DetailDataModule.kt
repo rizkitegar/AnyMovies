@@ -9,7 +9,6 @@ import com.movies.anymovies.feature.detail.domain.repository.MovieDetailReposito
 import com.movies.anymovies.feature.detail.domain.repository.ReviewRepository
 import com.movies.anymovies.feature.detail.domain.usecase.GetMovieDetailUseCase
 import com.movies.anymovies.feature.detail.domain.usecase.GetReviewsUseCase
-import com.movies.anymovies.feature.detail.domain.usecase.LoadNextReviewsPageUseCase
 import com.movies.anymovies.feature.detail.domain.usecase.SelectTrailerUseCase
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -36,5 +35,4 @@ public val detailDataModule: Module = module {
         )
     }
     factory { GetReviewsUseCase(reviewRepository = get()) }
-    factory { LoadNextReviewsPageUseCase(reviewRepository = get()) }
 }

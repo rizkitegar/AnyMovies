@@ -9,6 +9,7 @@ kotlin {
 
 dependencies {
     api(project(":core:common"))
+    api(libs.androidx.paging.common)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(platform(libs.junit.bom))

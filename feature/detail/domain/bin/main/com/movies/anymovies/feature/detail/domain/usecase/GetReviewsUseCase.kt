@@ -1,7 +1,6 @@
 package com.movies.anymovies.feature.detail.domain.usecase
 
-import com.movies.anymovies.core.common.result.Result
-import com.movies.anymovies.feature.detail.domain.model.PagedResult
+import androidx.paging.PagingData
 import com.movies.anymovies.feature.detail.domain.model.Review
 import com.movies.anymovies.feature.detail.domain.repository.ReviewRepository
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
 public class GetReviewsUseCase(
     private val reviewRepository: ReviewRepository,
 ) {
-    public operator fun invoke(movieId: Int): Flow<Result<PagedResult<Review>>> =
-        reviewRepository.observeReviews(movieId)
+    public operator fun invoke(movieId: Int): Flow<PagingData<Review>> =
+        reviewRepository.getReviewsPagingData(movieId)
 }

@@ -26,7 +26,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.movies.anymovies.navigation.Route
 import com.movies.anymovies.feature.detail.presentation.MovieDetailScreen
-import com.movies.anymovies.feature.detail.presentation.MovieReviewsScreen
 import com.movies.anymovies.feature.genre.presentation.GenreListScreen
 import com.movies.anymovies.feature.movies.presentation.MovieListScreen
 import com.movies.anymovies.ui.theme.AnyMoviesTheme
@@ -99,14 +98,6 @@ private fun AnyMoviesNavHost(
         composable<Route.MovieDetail> { backStackEntry ->
             val route = backStackEntry.toRoute<Route.MovieDetail>()
             MovieDetailScreen(
-                movieId = route.movieId,
-                onSeeAllReviews = { navController.navigate(Route.MovieReviews(movieId = route.movieId)) },
-                onBack = { navController.popBackStack() }
-            )
-        }
-        composable<Route.MovieReviews> { backStackEntry ->
-            val route = backStackEntry.toRoute<Route.MovieReviews>()
-            MovieReviewsScreen(
                 movieId = route.movieId,
                 onBack = { navController.popBackStack() }
             )

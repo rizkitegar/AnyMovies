@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.koin.core)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.paging.common)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
@@ -45,6 +46,7 @@ dependencies {
     testImplementation(libs.androidx.sqlite.bundled)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.paging.testing)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.vintage.engine)
 }
