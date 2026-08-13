@@ -29,12 +29,18 @@ internal class GenreListAdapter(
 
     internal class GenreViewHolder(
         private val binding: ItemGenreBinding,
-        private val onGenreClick: (Genre) -> Unit,
+        onGenreClick: (Genre) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        private var boundGenre: Genre? = null
+
+        init {
+            binding.genreItemName.setOnClickListener { boundGenre?.let(onGenreClick) }
+        }
+
         fun bind(genre: Genre) {
+            boundGenre = genre
             binding.genreItemName.text = genre.name
-            binding.genreItemName.setOnClickListener { onGenreClick(genre) }
         }
     }
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="8dp"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
@@ -12,45 +12,50 @@
 
     <ImageView
         android:id="@+id/moviePoster"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="210dp"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:src="@drawable/bg_movie_poster_placeholder" />
 
     <TextView
         android:id="@+id/movieTitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:textSize="14sp"
         android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/moviePoster"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:text="Movie Title Goes Here" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/movieYear"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:orientation="horizontal">
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@id/movieTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="2024" />
 
-        <TextView
-            android:id="@+id/movieYear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            tools:text="2024" />
+    <TextView
+        android:id="@+id/movieRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/movieYear"
+        app:layout_constraintBottom_toBottomOf="@id/movieYear"
+        app:layout_constraintStart_toEndOf="@id/movieYear"
+        tools:text="8.4" />
 
-        <TextView
-            android:id="@+id/movieRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            tools:text="8.4" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

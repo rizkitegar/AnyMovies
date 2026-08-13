@@ -6,7 +6,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil3.dispose
 import coil3.load
+import coil3.request.allowRgb565
 import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
@@ -33,23 +35,38 @@ internal class MovieListAdapter(
         holder.bind(getItem(position))
     }
 
+    override fun onViewRecycled(holder: MovieViewHolder) {
+        holder.recycle()
+    }
+
     internal class MovieViewHolder(
         private val binding: ItemMovieBinding,
-        private val onMovieClick: (MovieUiModel) -> Unit,
+        onMovieClick: (MovieUiModel) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        private var boundMovie: MovieUiModel? = null
+
+        init {
+            binding.root.setOnClickListener { boundMovie?.let(onMovieClick) }
+        }
+
         fun bind(movie: MovieUiModel) {
+            boundMovie = movie
             binding.moviePoster.load(movie.posterUrl) {
                 placeholder(R.drawable.bg_movie_poster_placeholder)
                 error(R.drawable.bg_movie_poster_error)
                 crossfade(false)
+                allowRgb565(true)
             }
             binding.movieTitle.text = movie.title
             binding.movieYear.isVisible = movie.releaseYearLabel != null
             binding.movieYear.text = movie.releaseYearLabel
             binding.movieRating.isVisible = movie.voteAverageLabel != null
             binding.movieRating.text = movie.voteAverageLabel
-            binding.root.setOnClickListener { onMovieClick(movie) }
+        }
+
+        fun recycle() {
+            binding.moviePoster.dispose()
         }
     }
 

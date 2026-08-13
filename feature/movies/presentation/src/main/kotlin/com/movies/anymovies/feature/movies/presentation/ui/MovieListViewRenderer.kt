@@ -37,10 +37,12 @@ internal class MovieListViewRenderer(
                 return if (position >= movieAdapter.itemCount) GRID_SPAN_COUNT else 1
             }
         }
+        layoutManager.initialPrefetchItemCount = GRID_SPAN_COUNT * 2
         binding.movieRecyclerView.apply {
             layoutManager = this@MovieListViewRenderer.layoutManager
             adapter = ConcatAdapter(movieAdapter, footerAdapter)
             setHasFixedSize(true)
+            setItemViewCacheSize(GRID_SPAN_COUNT * 6)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (dy <= 0) return
