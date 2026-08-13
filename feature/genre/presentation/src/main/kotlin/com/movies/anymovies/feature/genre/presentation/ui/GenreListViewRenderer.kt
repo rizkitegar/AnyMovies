@@ -11,7 +11,6 @@ import com.movies.anymovies.feature.genre.presentation.databinding.ViewGenreList
 internal class GenreListCallbacks(
     val onGenreClick: (Genre) -> Unit,
     val onRetry: () -> Unit,
-    val onRefresh: () -> Unit,
 )
 
 internal class GenreListViewRenderer(
@@ -26,21 +25,17 @@ internal class GenreListViewRenderer(
             adapter = this@GenreListViewRenderer.adapter
             setHasFixedSize(true)
         }
-        binding.genreSwipeRefresh.setOnRefreshListener { callbacks.onRefresh() }
     }
 
     fun render(state: GenreListUiState) {
         binding.genreShimmerContainer.isVisible = state is GenreListUiState.Loading
-        binding.genreSwipeRefresh.isVisible = state is GenreListUiState.Success
+        binding.genreRecyclerView.isVisible = state is GenreListUiState.Success
         binding.genreErrorStateView.isVisible = state is GenreListUiState.Error
         binding.genreEmptyStateView.isVisible = state is GenreListUiState.Empty
 
         when (state) {
             is GenreListUiState.Success -> {
                 adapter.submitList(state.genres)
-                if (binding.genreSwipeRefresh.isRefreshing != state.isRefreshing) {
-                    binding.genreSwipeRefresh.isRefreshing = state.isRefreshing
-                }
             }
             is GenreListUiState.Error -> {
                 binding.genreErrorStateView.render(

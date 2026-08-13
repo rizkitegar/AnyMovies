@@ -9,7 +9,6 @@ public sealed interface GenreListUiState {
 
     public data class Success(
         val genres: List<Genre>,
-        val isRefreshing: Boolean = false,
     ) : GenreListUiState
 
     public data object Empty : GenreListUiState

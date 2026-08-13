@@ -6,7 +6,6 @@ import com.movies.anymovies.core.common.result.Result
 import com.movies.anymovies.feature.genre.domain.model.Genre
 import com.movies.anymovies.feature.genre.domain.repository.GenreRepository
 import com.movies.anymovies.feature.genre.domain.usecase.GetGenresUseCase
-import com.movies.anymovies.feature.genre.domain.usecase.RefreshGenresUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,9 +20,6 @@ private class FakeGenreRepository : GenreRepository {
 
     private val observeQueue = ArrayDeque<Flow<Result<List<Genre>>>>()
 
-    var refreshResult: Result<Unit> = Result.Success(Unit)
-    var refreshCallCount: Int = 0
-        private set
     var observeCallCount: Int = 0
         private set
 
@@ -36,10 +32,7 @@ private class FakeGenreRepository : GenreRepository {
         return observeQueue.removeFirstOrNull() ?: emptyFlow()
     }
 
-    override suspend fun refreshGenres(): Result<Unit> {
-        refreshCallCount++
-        return refreshResult
-    }
+    override suspend fun refreshGenres(): Result<Unit> = Result.Success(Unit)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -54,7 +47,6 @@ class GenreListViewModelTest {
     private fun createViewModel(repository: FakeGenreRepository): GenreListViewModel {
         return GenreListViewModel(
             getGenresUseCase = GetGenresUseCase(repository),
-            refreshGenresUseCase = RefreshGenresUseCase(repository),
         )
     }
 
@@ -95,29 +87,6 @@ class GenreListViewModelTest {
 
             assertEquals(GenreListUiState.Success(listOf(actionGenre, comedyGenre)), awaitItem())
         }
-    }
-
-    @Test
-    fun `pull to refresh flags refreshing and clears it once the network call returns`() = runTest {
-        val repository = FakeGenreRepository()
-        repository.enqueueObserveResult(flowOf(Result.Success(listOf(actionGenre))))
-        val viewModel = createViewModel(repository)
-
-        viewModel.uiState.test {
-            assertEquals(GenreListUiState.Success(listOf(actionGenre)), awaitItem())
-
-            viewModel.onRefresh()
-
-            assertEquals(
-                GenreListUiState.Success(listOf(actionGenre), isRefreshing = true),
-                awaitItem(),
-            )
-            assertEquals(
-                GenreListUiState.Success(listOf(actionGenre), isRefreshing = false),
-                awaitItem(),
-            )
-        }
-        assertEquals(1, repository.refreshCallCount)
     }
 
     @Test

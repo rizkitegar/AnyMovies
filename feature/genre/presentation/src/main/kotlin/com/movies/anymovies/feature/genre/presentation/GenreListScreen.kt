@@ -35,7 +35,6 @@ public fun GenreListScreen(
         GenreListCallbacks(
             onGenreClick = { genre: Genre -> onGenreClick(genre.id, genre.name) },
             onRetry = viewModel::onRetry,
-            onRefresh = viewModel::onRefresh,
         )
     }
     var renderer by remember { mutableStateOf<GenreListViewRenderer?>(null) }

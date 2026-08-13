@@ -5,7 +5,6 @@ import com.movies.anymovies.feature.genre.data.remote.GenreApi
 import com.movies.anymovies.feature.genre.data.repository.GenreRepositoryImpl
 import com.movies.anymovies.feature.genre.domain.repository.GenreRepository
 import com.movies.anymovies.feature.genre.domain.usecase.GetGenresUseCase
-import com.movies.anymovies.feature.genre.domain.usecase.RefreshGenresUseCase
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -21,5 +20,4 @@ public val genreDataModule: Module = module {
         )
     }
     factory { GetGenresUseCase(genreRepository = get()) }
-    factory { RefreshGenresUseCase(genreRepository = get()) }
 }
