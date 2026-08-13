@@ -1,5 +1,6 @@
 package com.movies.anymovies.core.network.error
 
+import android.database.sqlite.SQLiteException
 import com.movies.anymovies.core.common.error.DomainError
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
@@ -13,6 +14,7 @@ public fun Throwable.toDomainError(): DomainError {
         is UnknownHostException, is ConnectException -> DomainError.NoConnection
         is SerializationException -> DomainError.Parse
         is HttpException -> code().toHttpDomainError()
+        is SQLiteException -> DomainError.LocalStorage
         else -> DomainError.Unknown
     }
 }

@@ -175,4 +175,13 @@ class MovieRepositoryImplTest {
 
         assertEquals(2, server.requestCount)
     }
+
+    @Test
+    fun `observeMoviesByGenre surfaces an error instead of crashing when the local database is unavailable`() = runTest {
+        database.close()
+
+        val result = repository.observeMoviesByGenre(genreId = 28).first()
+
+        assertTrue(result is Result.Error)
+    }
 }

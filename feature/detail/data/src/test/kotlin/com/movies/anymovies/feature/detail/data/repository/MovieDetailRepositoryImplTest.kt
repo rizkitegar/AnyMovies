@@ -192,6 +192,15 @@ class MovieDetailRepositoryImplTest {
         assertEquals(listOf("Cached Title", "Movie 1"), titles)
     }
 
+    @Test
+    fun `observeMovieDetail surfaces an error instead of crashing when the local database is unavailable`() = runTest {
+        database.close()
+
+        val result = repository.observeMovieDetail(movieId = 1).first()
+
+        assertTrue(result is Result.Error)
+    }
+
     private fun cachedEntity(fetchedAtMillis: Long) = MovieDetailEntity(
         id = 1,
         title = "Cached Title",

@@ -14,6 +14,7 @@ import com.movies.anymovies.feature.detail.domain.repository.MovieDetailReposito
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
@@ -56,6 +57,9 @@ internal class MovieDetailRepositoryImpl(
                 }
             },
         )
+    }.catch { e ->
+        if (e is CancellationException) throw e
+        emit(Result.Error(e.toDomainError()))
     }
 
     override suspend fun refresh(movieId: Int): Result<Unit> = fetchDetail(movieId)

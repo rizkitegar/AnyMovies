@@ -169,4 +169,13 @@ class GenreRepositoryImplTest {
         val lastGenres = (emissions.last() as Result.Success).data
         assertEquals(listOf(Genre(35, "Comedy")), lastGenres)
     }
+
+    @Test
+    fun `observeGenres surfaces an error instead of crashing when the local database is unavailable`() = runTest {
+        database.close()
+
+        val result = repository.observeGenres().first()
+
+        assertTrue(result is Result.Error)
+    }
 }
