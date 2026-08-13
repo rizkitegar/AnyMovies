@@ -390,7 +390,6 @@ private fun MovieDetailBody(
         VideoSection(videos = movie.videos, onVideoClick = onVideoClick)
 
         Spacer(modifier = Modifier.height(24.dp))
-        // TODO(Phase 5): render ReviewsSection here once the reviews feature ships.
         ReviewsSection(movieId = movie.id, onSeeAllReviews = onSeeAllReviews)
     }
 }
@@ -448,14 +447,4 @@ private fun ExpandableOverview(text: String, modifier: Modifier = Modifier) {
             )
         }
     }
-}
-
-@Composable
-private fun ReviewsSection(
-    movieId: Int,
-    onSeeAllReviews: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    // Placeholder slot — inline review cards and "See all reviews" ship in a
-    // later milestone. Intentionally renders nothing for now.
 }
