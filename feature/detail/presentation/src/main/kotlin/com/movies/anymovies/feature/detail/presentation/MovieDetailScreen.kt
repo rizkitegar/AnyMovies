@@ -32,19 +32,19 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,6 +59,7 @@ import com.movies.anymovies.core.ui.state.ShimmerBlock
 import com.movies.anymovies.feature.detail.presentation.model.GenreUiModel
 import com.movies.anymovies.feature.detail.presentation.model.MovieDetailUiModel
 import com.movies.anymovies.feature.detail.presentation.model.VideoUiModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -184,11 +185,17 @@ private fun MovieDetailSuccess(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
-    // Exposed as the State object itself (not a delegated `var`) so downstream
-    // readers of `.value` recompose in isolation instead of forcing this whole
-    // function — and every lambda built from it — to rebuild on every toggle.
-    val playingVideoKeyState = rememberSaveable { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val onOpenYoutube = remember(context, snackbarHostState, coroutineScope) {
+        { key: String ->
+            if (!launchYoutube(context, key)) {
+                coroutineScope.launch { snackbarHostState.showSnackbar(COULD_NOT_OPEN_YOUTUBE_MESSAGE) }
+            }
+        }
+    }
 
     // Derived so recomposition only happens when the collapse fraction
     // actually changes, not on every raw scroll pixel.
@@ -201,11 +208,11 @@ private fun MovieDetailSuccess(
     }
     val titleAlpha by animateFloatAsState(targetValue = collapseFraction, label = "titleAlpha")
 
-    val onPlayTrailer = remember(movie.selectedTrailerKey) {
-        movie.selectedTrailerKey?.let { key -> { playingVideoKeyState.value = key } }
+    val onPlayTrailer = remember(movie.selectedTrailerKey, onOpenYoutube) {
+        movie.selectedTrailerKey?.let { key -> { onOpenYoutube(key) } }
     }
-    val onVideoClick = remember {
-        { video: VideoUiModel -> playingVideoKeyState.value = video.key }
+    val onVideoClick = remember(onOpenYoutube) {
+        { video: VideoUiModel -> onOpenYoutube(video.key) }
     }
 
     Box(modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.SUCCESS)) {
@@ -228,34 +235,7 @@ private fun MovieDetailSuccess(
             modifier = Modifier.align(Alignment.TopCenter),
         )
 
-        TrailerOverlay(videoKeyState = playingVideoKeyState, snackbarHostState = snackbarHostState)
-
         SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
-    }
-}
-
-/**
- * Reads [videoKeyState] itself, so a toggle recomposes only this overlay
- * instead of the whole [MovieDetailSuccess] tree (and the lambdas it builds).
- */
-@Composable
-private fun TrailerOverlay(
-    videoKeyState: MutableState<String?>,
-    snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-) {
-    val currentVideoKey = videoKeyState.value
-    if (currentVideoKey != null) {
-        Box(
-            modifier = modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.9f)),
-            contentAlignment = Alignment.Center,
-        ) {
-            TrailerPlayer(
-                videoKey = currentVideoKey,
-                onClose = { videoKeyState.value = null },
-                snackbarHostState = snackbarHostState,
-            )
-        }
     }
 }
 

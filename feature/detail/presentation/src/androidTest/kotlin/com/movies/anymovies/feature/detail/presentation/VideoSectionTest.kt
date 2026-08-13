@@ -25,7 +25,6 @@ import com.movies.anymovies.feature.detail.domain.model.Genre
 import com.movies.anymovies.feature.detail.domain.model.MovieDetail
 import com.movies.anymovies.feature.detail.presentation.model.toUiModel
 import java.time.LocalDate
-import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.launch
 import org.junit.Rule
 import org.junit.Test
@@ -66,27 +65,6 @@ class VideoSectionTest {
 
         composeRule.onNodeWithTag(VideoSectionTestTags.PLAY_BUTTON).assertDoesNotExist()
         composeRule.onNodeWithTag(VideoSectionTestTags.THUMBNAIL_ROW).assertDoesNotExist()
-    }
-
-    @Test
-    fun embedFailureShowsAMessageWithAnOpenInYoutubeAction() {
-        val openYoutubeCount = AtomicInteger(0)
-
-        composeRule.setContent {
-            TrailerPlayerFrame(
-                state = TrailerPlaybackState.EmbedError("This trailer can't be played here."),
-                onClose = {},
-                onRetry = {},
-                onOpenYoutube = { openYoutubeCount.incrementAndGet() },
-                playerContent = {},
-            )
-        }
-
-        composeRule.onNodeWithTag(TrailerPlayerTestTags.ERROR_MESSAGE).assertIsDisplayed()
-        composeRule.onNodeWithTag(TrailerPlayerTestTags.OPEN_YOUTUBE_BUTTON).assertIsDisplayed()
-        composeRule.onNodeWithTag(TrailerPlayerTestTags.OPEN_YOUTUBE_BUTTON).performClick()
-
-        assert(openYoutubeCount.get() == 1)
     }
 
     @Test
