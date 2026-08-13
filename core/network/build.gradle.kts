@@ -56,6 +56,7 @@ dependencies {
     api(libs.okhttp.core)
     debugImplementation(libs.okhttp.logging.interceptor)
     implementation(libs.koin.android)
+    implementation(libs.androidx.startup.runtime)
 
     debugImplementation(libs.chucker)
     releaseImplementation(libs.chucker.noop)

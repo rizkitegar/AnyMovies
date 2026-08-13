@@ -9,10 +9,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -32,14 +37,23 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         requestNotificationPermissionIfNeeded()
+
+        var firstFrameDrawn by mutableStateOf(false)
+        splashScreen.setKeepOnScreenCondition { !firstFrameDrawn }
+
         setContent {
             AnyMoviesTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AnyMoviesNavHost(modifier = Modifier.padding(innerPadding))
+                    AnyMoviesNavHost(
+                        modifier = Modifier.padding(innerPadding),
+                        onGenreListContentReady = { reportFullyDrawn() },
+                    )
                 }
+                SideEffect { firstFrameDrawn = true }
             }
         }
     }
@@ -57,7 +71,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun AnyMoviesNavHost(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    onGenreListContentReady: () -> Unit = {},
 ) {
     NavHost(
         navController = navController,
@@ -68,7 +83,8 @@ private fun AnyMoviesNavHost(
             GenreListScreen(
                 onGenreClick = { genreId, genreName ->
                     navController.navigate(Route.MovieList(genreId = genreId, genreName = genreName))
-                }
+                },
+                onContentReady = onGenreListContentReady,
             )
         }
         composable<Route.MovieList> { backStackEntry ->

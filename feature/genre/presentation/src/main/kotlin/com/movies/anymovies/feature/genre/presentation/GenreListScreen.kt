@@ -2,6 +2,7 @@ package com.movies.anymovies.feature.genre.presentation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,9 +20,16 @@ import org.koin.androidx.compose.koinViewModel
 public fun GenreListScreen(
     onGenreClick: (genreId: Int, genreName: String) -> Unit,
     modifier: Modifier = Modifier,
+    onContentReady: () -> Unit = {},
     viewModel: GenreListViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState is GenreListUiState.Success) {
+        if (uiState is GenreListUiState.Success) {
+            onContentReady()
+        }
+    }
 
     val callbacks = remember(viewModel, onGenreClick) {
         GenreListCallbacks(
