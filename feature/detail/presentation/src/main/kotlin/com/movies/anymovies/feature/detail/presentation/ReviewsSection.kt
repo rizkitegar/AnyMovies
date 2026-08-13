@@ -27,12 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.ui.R as CoreUiR
+import com.movies.anymovies.core.ui.error.toUserMessage
 import com.movies.anymovies.core.ui.state.EmptyState
 import com.movies.anymovies.core.ui.state.ErrorState
 import com.movies.anymovies.core.ui.state.LoadingShimmer
@@ -86,10 +88,10 @@ internal fun ReviewsSectionContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "Reviews", style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.reviews_section_heading), style = MaterialTheme.typography.titleMedium)
             if (state is ReviewsSectionUiState.Success) {
                 Text(
-                    text = "See all (${state.totalResults})",
+                    text = stringResource(R.string.reviews_see_all, state.totalResults),
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier
                         .testTag(ReviewsSectionTestTags.SEE_ALL)
@@ -111,7 +113,7 @@ internal fun ReviewsSectionContent(
 
             is ReviewsSectionUiState.Empty -> {
                 EmptyState(
-                    message = "No reviews yet",
+                    message = stringResource(R.string.reviews_empty_state),
                     modifier = Modifier.testTag(ReviewsSectionTestTags.EMPTY),
                 )
             }
@@ -119,7 +121,7 @@ internal fun ReviewsSectionContent(
             is ReviewsSectionUiState.Error -> {
                 ErrorState(
                     message = state.error.toUserMessage(),
-                    actionLabel = "Retry",
+                    actionLabel = stringResource(CoreUiR.string.core_ui_retry),
                     onAction = onRetry,
                     actionModifier = Modifier.testTag(ReviewsSectionTestTags.RETRY_BUTTON),
                     modifier = Modifier.testTag(ReviewsSectionTestTags.ERROR),
@@ -221,7 +223,7 @@ private fun ExpandableReviewContent(reviewId: String, text: String, modifier: Mo
         )
         if (isOverflowing || expanded) {
             Text(
-                text = if (expanded) "Read less" else "Read more",
+                text = if (expanded) stringResource(R.string.detail_read_less) else stringResource(R.string.detail_read_more),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .padding(top = 4.dp)

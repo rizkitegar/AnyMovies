@@ -2,4 +2,13 @@
 <resources>
     <string name="core_ui_legacy_retry">Retry</string>
     <string name="core_ui_legacy_end_reached">You\'ve reached the end</string>
+    <string name="core_ui_legacy_error_no_connection">No internet connection. Check your network and try again.</string>
+    <string name="core_ui_legacy_error_timeout">The request took too long. Please try again.</string>
+    <string name="core_ui_legacy_error_unauthorized">We can\'t reach the movie service right now.</string>
+    <string name="core_ui_legacy_error_not_found">This movie isn\'t available anymore.</string>
+    <string name="core_ui_legacy_error_rate_limited">Too many requests. Please wait a moment.</string>
+    <string name="core_ui_legacy_error_server">The movie service is having trouble. Try again shortly.</string>
+    <string name="core_ui_legacy_error_parse">Something went wrong loading this content.</string>
+    <string name="core_ui_legacy_error_local_storage">Couldn\'t load saved data.</string>
+    <string name="core_ui_legacy_error_unknown">Something went wrong. Please try again.</string>
 </resources>

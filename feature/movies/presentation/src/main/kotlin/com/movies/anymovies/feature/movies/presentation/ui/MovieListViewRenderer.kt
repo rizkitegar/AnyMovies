@@ -4,7 +4,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.uilegacy.error.toUserMessage
 import com.movies.anymovies.core.uilegacy.state.AppendFooterAdapter
 import com.movies.anymovies.core.uilegacy.state.AppendFooterState
 import com.movies.anymovies.feature.movies.presentation.MovieListUiState
@@ -73,11 +73,11 @@ internal class MovieListViewRenderer(
                     state.endReached -> AppendFooterState.END_REACHED
                     else -> AppendFooterState.IDLE
                 }
-                footerAdapter.submit(footerState, state.appendError?.toUserMessage().orEmpty())
+                footerAdapter.submit(footerState, state.appendError?.toUserMessage(context).orEmpty())
             }
             is MovieListUiState.Error -> {
                 binding.movieErrorStateView.render(
-                    message = state.error.toUserMessage(),
+                    message = state.error.toUserMessage(context),
                     onRetry = callbacks.onRetry,
                 )
             }

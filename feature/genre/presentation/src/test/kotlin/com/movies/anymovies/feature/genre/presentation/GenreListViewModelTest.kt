@@ -2,7 +2,6 @@ package com.movies.anymovies.feature.genre.presentation
 
 import app.cash.turbine.test
 import com.movies.anymovies.core.common.error.DomainError
-import com.movies.anymovies.core.common.error.toUserMessage
 import com.movies.anymovies.core.common.result.Result
 import com.movies.anymovies.feature.genre.domain.model.Genre
 import com.movies.anymovies.feature.genre.domain.repository.GenreRepository
@@ -154,10 +153,6 @@ class GenreListViewModelTest {
         viewModel.uiState.test {
             val state = awaitItem()
             assertEquals(GenreListUiState.Error(DomainError.Unauthorized), state)
-            assertEquals(
-                "We can't reach the movie service right now.",
-                (state as GenreListUiState.Error).error.toUserMessage(),
-            )
         }
     }
 

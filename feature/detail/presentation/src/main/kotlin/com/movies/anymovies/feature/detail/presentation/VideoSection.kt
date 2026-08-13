@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -41,18 +42,19 @@ public object VideoSectionTestTags {
 
 @Composable
 internal fun TrailerPlayButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val playTrailerLabel = stringResource(R.string.detail_video_play_trailer)
     Box(
         modifier = modifier
             .size(56.dp)
             .clip(CircleShape)
             .background(Color.Black.copy(alpha = 0.6f))
-            .clickable(onClickLabel = "Play trailer", onClick = onClick)
+            .clickable(onClickLabel = playTrailerLabel, onClick = onClick)
             .testTag(VideoSectionTestTags.PLAY_BUTTON),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = Icons.Filled.PlayArrow,
-            contentDescription = "Play trailer",
+            contentDescription = playTrailerLabel,
             tint = Color.White,
             modifier = Modifier.size(32.dp),
         )
@@ -69,7 +71,7 @@ internal fun VideoSection(
     if (videos.size <= 1) return
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Text(text = "Videos", style = MaterialTheme.typography.titleMedium)
+        Text(text = stringResource(R.string.detail_section_videos), style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),

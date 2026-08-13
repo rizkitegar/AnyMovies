@@ -2,7 +2,7 @@ package com.movies.anymovies.feature.genre.presentation.ui
 
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.uilegacy.error.toUserMessage
 import com.movies.anymovies.feature.genre.domain.model.Genre
 import com.movies.anymovies.feature.genre.presentation.GenreListUiState
 import com.movies.anymovies.feature.genre.presentation.R
@@ -44,7 +44,7 @@ internal class GenreListViewRenderer(
             }
             is GenreListUiState.Error -> {
                 binding.genreErrorStateView.render(
-                    message = state.error.toUserMessage(),
+                    message = state.error.toUserMessage(context),
                     onRetry = callbacks.onRetry,
                 )
             }

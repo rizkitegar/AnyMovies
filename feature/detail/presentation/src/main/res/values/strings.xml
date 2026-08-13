@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_error_title_not_found">Movie not found</string>
+    <string name="detail_error_title_generic">Something went wrong</string>
+    <string name="detail_section_overview">Overview</string>
+    <string name="detail_read_more">Read more</string>
+    <string name="detail_read_less">Read less</string>
+    <string name="detail_section_videos">Videos</string>
+    <string name="detail_video_play_trailer">Play trailer</string>
+    <string name="detail_youtube_open_failed">Couldn\'t open YouTube. No app found.</string>
+    <string name="reviews_section_heading">Reviews</string>
+    <string name="reviews_see_all">See all (%1$d)</string>
+    <string name="reviews_empty_state">No reviews yet</string>
+    <string name="movie_reviews_screen_title">Reviews</string>
+</resources>

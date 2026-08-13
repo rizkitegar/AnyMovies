@@ -26,9 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.ui.R as CoreUiR
+import com.movies.anymovies.core.ui.error.toUserMessage
 import com.movies.anymovies.core.ui.state.AppendFooter
 import com.movies.anymovies.core.ui.state.AppendFooterState
 import com.movies.anymovies.core.ui.state.EmptyState
@@ -95,13 +97,13 @@ internal fun MovieReviewsContent(
             }
 
             is MovieReviewsUiState.Empty -> EmptyState(
-                message = "No reviews yet",
+                message = stringResource(R.string.reviews_empty_state),
                 modifier = Modifier.fillMaxSize().testTag(MovieReviewsTestTags.EMPTY),
             )
 
             is MovieReviewsUiState.Error -> ErrorState(
                 message = state.error.toUserMessage(),
-                actionLabel = "Retry",
+                actionLabel = stringResource(CoreUiR.string.core_ui_retry),
                 onAction = onRetry,
                 actionModifier = Modifier.testTag(MovieReviewsTestTags.RETRY_BUTTON),
                 modifier = Modifier.fillMaxSize().testTag(MovieReviewsTestTags.ERROR),
@@ -120,10 +122,10 @@ internal fun MovieReviewsContent(
 private fun MovieReviewsTopBar(onBack: () -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 8.dp)) {
         IconButton(onClick = onBack, modifier = Modifier.testTag(MovieReviewsTestTags.BACK_BUTTON)) {
-            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(CoreUiR.string.core_ui_back))
         }
         Text(
-            text = "Reviews",
+            text = stringResource(R.string.movie_reviews_screen_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 8.dp).align(Alignment.CenterVertically),
         )

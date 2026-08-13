@@ -46,13 +46,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.movies.anymovies.core.common.error.DomainError
-import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.ui.R as CoreUiR
+import com.movies.anymovies.core.ui.error.toUserMessage
 import com.movies.anymovies.core.ui.state.ErrorState
 import com.movies.anymovies.core.ui.state.LoadingShimmer
 import com.movies.anymovies.core.ui.state.ShimmerBlock
@@ -152,8 +154,8 @@ private fun MovieDetailLoading(onBack: () -> Unit, modifier: Modifier = Modifier
 private fun MovieDetailNotFound(onBack: () -> Unit, modifier: Modifier = Modifier) {
     ErrorState(
         message = DomainError.NotFound.toUserMessage(),
-        title = "Movie not found",
-        actionLabel = "Back",
+        title = stringResource(R.string.detail_error_title_not_found),
+        actionLabel = stringResource(CoreUiR.string.core_ui_back),
         onAction = onBack,
         modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.NOT_FOUND),
     )
@@ -169,8 +171,12 @@ private fun MovieDetailError(
 ) {
     ErrorState(
         message = error.toUserMessage(),
-        title = "Something went wrong",
-        actionLabel = if (isRetryable) "Retry" else "Back",
+        title = stringResource(R.string.detail_error_title_generic),
+        actionLabel = if (isRetryable) {
+            stringResource(CoreUiR.string.core_ui_retry)
+        } else {
+            stringResource(CoreUiR.string.core_ui_back)
+        },
         onAction = if (isRetryable) onRetry else onBack,
         actionModifier = if (isRetryable) Modifier.testTag(MovieDetailTestTags.RETRY_BUTTON) else Modifier,
         modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.ERROR),
@@ -188,11 +194,12 @@ private fun MovieDetailSuccess(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val couldNotOpenYoutubeMessage = stringResource(R.string.detail_youtube_open_failed)
 
-    val onOpenYoutube = remember(context, snackbarHostState, coroutineScope) {
+    val onOpenYoutube = remember(context, snackbarHostState, coroutineScope, couldNotOpenYoutubeMessage) {
         { key: String ->
             if (!launchYoutube(context, key)) {
-                coroutineScope.launch { snackbarHostState.showSnackbar(COULD_NOT_OPEN_YOUTUBE_MESSAGE) }
+                coroutineScope.launch { snackbarHostState.showSnackbar(couldNotOpenYoutubeMessage) }
             }
         }
     }
@@ -271,7 +278,7 @@ private fun CollapsingTopBar(
 @Composable
 private fun BackButton(onBack: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(onClick = onBack, modifier = modifier.testTag(MovieDetailTestTags.BACK_BUTTON)) {
-        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(CoreUiR.string.core_ui_back))
     }
 }
 
@@ -342,7 +349,7 @@ private fun MovieDetailBody(
         MovieDetailChips(movie = movie)
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Overview", style = MaterialTheme.typography.titleMedium)
+        Text(text = stringResource(R.string.detail_section_overview), style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(4.dp))
         ExpandableOverview(text = movie.overviewLabel)
 
@@ -398,7 +405,7 @@ private fun ExpandableOverview(text: String, modifier: Modifier = Modifier) {
         )
         if (isOverflowing || expanded) {
             Text(
-                text = if (expanded) "Read less" else "Read more",
+                text = if (expanded) stringResource(R.string.detail_read_less) else stringResource(R.string.detail_read_more),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .padding(top = 4.dp)
