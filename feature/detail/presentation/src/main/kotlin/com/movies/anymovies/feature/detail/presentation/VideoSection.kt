@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,8 +75,9 @@ internal fun VideoSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth().testTag(VideoSectionTestTags.THUMBNAIL_ROW),
         ) {
-            items(videos, key = { it.id }) { video ->
-                VideoThumbnail(video = video, onClick = { onVideoClick(video) })
+            items(videos, key = { it.id }, contentType = { "video" }) { video ->
+                val onClick = remember(video, onVideoClick) { { onVideoClick(video) } }
+                VideoThumbnail(video = video, onClick = onClick)
             }
         }
     }

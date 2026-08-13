@@ -24,6 +24,16 @@ android {
     }
 }
 
+composeCompiler {
+    metricsDestination = layout.buildDirectory.dir("compose_metrics")
+    reportsDestination = layout.buildDirectory.dir("compose_reports")
+    // Trusts DomainError (:core:common) as stable: it's an exhaustive sealed
+    // class of `data object` singletons with structural equality, but that
+    // module is pure Kotlin and can't take a Compose dependency to carry an
+    // @Stable annotation itself.
+    stabilityConfigurationFiles.add(layout.projectDirectory.file("compose_stability_config.conf"))
+}
+
 dependencies {
     implementation(project(":feature:detail:domain"))
     implementation(project(":core:common"))

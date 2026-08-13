@@ -115,18 +115,25 @@ public fun TrailerPlayer(
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
 
-    TrailerPlayerFrame(
-        state = playbackState,
-        onClose = onClose,
-        onRetry = {
+    val onRetry: () -> Unit = remember(videoKey) {
+        {
             playbackState = TrailerPlaybackState.Loading
-            retryAttempt++
-        },
-        onOpenYoutube = {
+            retryAttempt += 1
+        }
+    }
+    val onOpenYoutube = remember(videoKey, context, snackbarHostState, coroutineScope) {
+        {
             if (!launchYoutube(context, videoKey)) {
                 coroutineScope.launch { snackbarHostState.showSnackbar(COULD_NOT_OPEN_YOUTUBE_MESSAGE) }
             }
-        },
+        }
+    }
+
+    TrailerPlayerFrame(
+        state = playbackState,
+        onClose = onClose,
+        onRetry = onRetry,
+        onOpenYoutube = onOpenYoutube,
         modifier = modifier,
     ) {
         key(videoKey, retryAttempt) {

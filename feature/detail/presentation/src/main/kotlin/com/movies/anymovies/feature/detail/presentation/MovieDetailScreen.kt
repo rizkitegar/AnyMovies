@@ -32,6 +32,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -183,7 +184,10 @@ private fun MovieDetailSuccess(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
-    var playingVideoKey by rememberSaveable { mutableStateOf<String?>(null) }
+    // Exposed as the State object itself (not a delegated `var`) so downstream
+    // readers of `.value` recompose in isolation instead of forcing this whole
+    // function — and every lambda built from it — to rebuild on every toggle.
+    val playingVideoKeyState = rememberSaveable { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Derived so recomposition only happens when the collapse fraction
@@ -197,19 +201,23 @@ private fun MovieDetailSuccess(
     }
     val titleAlpha by animateFloatAsState(targetValue = collapseFraction, label = "titleAlpha")
 
+    val onPlayTrailer = remember(movie.selectedTrailerKey) {
+        movie.selectedTrailerKey?.let { key -> { playingVideoKeyState.value = key } }
+    }
+    val onVideoClick = remember {
+        { video: VideoUiModel -> playingVideoKeyState.value = video.key }
+    }
+
     Box(modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.SUCCESS)) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-            item(key = "header") {
-                MovieDetailHeader(
-                    movie = movie,
-                    onPlayTrailer = movie.selectedTrailerKey?.let { key -> { playingVideoKey = key } },
-                )
+            item(key = "header", contentType = "header") {
+                MovieDetailHeader(movie = movie, onPlayTrailer = onPlayTrailer)
             }
-            item(key = "body") {
+            item(key = "body", contentType = "body") {
                 MovieDetailBody(
                     movie = movie,
                     onSeeAllReviews = onSeeAllReviews,
-                    onVideoClick = { playingVideoKey = it.key },
+                    onVideoClick = onVideoClick,
                 )
             }
         }
@@ -220,21 +228,34 @@ private fun MovieDetailSuccess(
             modifier = Modifier.align(Alignment.TopCenter),
         )
 
-        val currentVideoKey = playingVideoKey
-        if (currentVideoKey != null) {
-            Box(
-                modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.9f)),
-                contentAlignment = Alignment.Center,
-            ) {
-                TrailerPlayer(
-                    videoKey = currentVideoKey,
-                    onClose = { playingVideoKey = null },
-                    snackbarHostState = snackbarHostState,
-                )
-            }
-        }
+        TrailerOverlay(videoKeyState = playingVideoKeyState, snackbarHostState = snackbarHostState)
 
         SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+    }
+}
+
+/**
+ * Reads [videoKeyState] itself, so a toggle recomposes only this overlay
+ * instead of the whole [MovieDetailSuccess] tree (and the lambdas it builds).
+ */
+@Composable
+private fun TrailerOverlay(
+    videoKeyState: MutableState<String?>,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+) {
+    val currentVideoKey = videoKeyState.value
+    if (currentVideoKey != null) {
+        Box(
+            modifier = modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.9f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            TrailerPlayer(
+                videoKey = currentVideoKey,
+                onClose = { videoKeyState.value = null },
+                snackbarHostState = snackbarHostState,
+            )
+        }
     }
 }
 
