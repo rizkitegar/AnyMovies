@@ -39,83 +39,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <include layout="@layout/view_movie_shimmer_item" />
-                <include layout="@layout/view_movie_shimmer_item" />
+                <include layout="@layout/view_shimmer_grid_item" />
+                <include layout="@layout/view_shimmer_grid_item" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <include layout="@layout/view_movie_shimmer_item" />
-                <include layout="@layout/view_movie_shimmer_item" />
+                <include layout="@layout/view_shimmer_grid_item" />
+                <include layout="@layout/view_shimmer_grid_item" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <include layout="@layout/view_movie_shimmer_item" />
-                <include layout="@layout/view_movie_shimmer_item" />
+                <include layout="@layout/view_shimmer_grid_item" />
+                <include layout="@layout/view_shimmer_grid_item" />
             </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/movieErrorContainer"
+        <com.movies.anymovies.core.uilegacy.state.ErrorStateView
+            android:id="@+id/movieErrorStateView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp"
-            android:visibility="gone">
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/movieErrorMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="16sp"
-                tools:text="The initial page load failed." />
-
-            <Button
-                android:id="@+id/movieErrorRetryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:text="@string/movie_error_retry" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/movieEmptyContainer"
+        <com.movies.anymovies.core.uilegacy.state.EmptyStateView
+            android:id="@+id/movieEmptyStateView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/movieEmptyMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/movie_empty_title"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/movieEmptyBackButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:text="@string/movie_empty_back" />
-
-        </LinearLayout>
+            android:visibility="gone" />
 
     </FrameLayout>
 

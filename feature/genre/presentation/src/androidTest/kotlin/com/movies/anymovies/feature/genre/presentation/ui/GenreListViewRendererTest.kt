@@ -10,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.movies.anymovies.core.common.error.DomainError
+import com.movies.anymovies.core.uilegacy.R as UiLegacyR
 import com.movies.anymovies.feature.genre.domain.model.Genre
 import com.movies.anymovies.feature.genre.presentation.GenreListUiState
 import com.movies.anymovies.feature.genre.presentation.R
@@ -41,8 +42,8 @@ class GenreListViewRendererTest {
                 renderer.render(GenreListUiState.Error(DomainError.Server))
             }
 
-            onView(withId(R.id.genreErrorRetryButton)).check(matches(isDisplayed()))
-            onView(withId(R.id.genreErrorRetryButton)).perform(click())
+            onView(withId(UiLegacyR.id.stateErrorRetryButton)).check(matches(isDisplayed()))
+            onView(withId(UiLegacyR.id.stateErrorRetryButton)).perform(click())
         }
 
         assertTrue(retryInvoked.get())

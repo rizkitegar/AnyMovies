@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="movie_error_retry">Retry</string>
     <string name="movie_empty_title">No movies found in this genre</string>
     <string name="movie_empty_back">Back</string>
-    <string name="movie_footer_end">You\'ve reached the end</string>
     <string name="movie_list_content_description">Movie list</string>
 </resources>

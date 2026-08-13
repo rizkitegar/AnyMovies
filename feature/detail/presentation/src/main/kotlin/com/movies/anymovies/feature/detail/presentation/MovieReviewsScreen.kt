@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,10 +28,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.movies.anymovies.core.common.error.DomainError
 import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.ui.state.AppendFooter
+import com.movies.anymovies.core.ui.state.AppendFooterState
+import com.movies.anymovies.core.ui.state.EmptyState
+import com.movies.anymovies.core.ui.state.ErrorState
+import com.movies.anymovies.core.ui.state.LoadingShimmer
+import com.movies.anymovies.core.ui.state.ShimmerBlock
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+
+private val ReviewShimmerRowHeight = 64.dp
 
 private const val LOAD_MORE_THRESHOLD = 4
 
@@ -81,27 +85,27 @@ internal fun MovieReviewsContent(
     Column(modifier = modifier.fillMaxSize()) {
         MovieReviewsTopBar(onBack = onBack)
         when (state) {
-            is MovieReviewsUiState.Loading -> Text(
-                text = "Loading reviews…",
-                style = MaterialTheme.typography.bodyMedium,
+            is MovieReviewsUiState.Loading -> LoadingShimmer(
                 modifier = Modifier.padding(16.dp).testTag(MovieReviewsTestTags.LOADING),
-            )
-
-            is MovieReviewsUiState.Empty -> Text(
-                text = "No reviews yet",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp).testTag(MovieReviewsTestTags.EMPTY),
-            )
-
-            is MovieReviewsUiState.Error -> Column(
-                modifier = Modifier.padding(16.dp).testTag(MovieReviewsTestTags.ERROR),
             ) {
-                Text(text = state.error.toUserMessage(), style = MaterialTheme.typography.bodyMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = onRetry, modifier = Modifier.testTag(MovieReviewsTestTags.RETRY_BUTTON)) {
-                    Text(text = "Retry")
+                repeat(4) {
+                    ShimmerBlock(modifier = Modifier.fillMaxWidth().height(ReviewShimmerRowHeight))
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
+
+            is MovieReviewsUiState.Empty -> EmptyState(
+                message = "No reviews yet",
+                modifier = Modifier.fillMaxSize().testTag(MovieReviewsTestTags.EMPTY),
+            )
+
+            is MovieReviewsUiState.Error -> ErrorState(
+                message = state.error.toUserMessage(),
+                actionLabel = "Retry",
+                onAction = onRetry,
+                actionModifier = Modifier.testTag(MovieReviewsTestTags.RETRY_BUTTON),
+                modifier = Modifier.fillMaxSize().testTag(MovieReviewsTestTags.ERROR),
+            )
 
             is MovieReviewsUiState.Success -> MovieReviewsList(
                 state = state,
@@ -157,47 +161,25 @@ private fun MovieReviewsList(
             ReviewCard(review = review)
         }
         item(key = "footer", contentType = "footer") {
-            MovieReviewsFooter(
-                isAppending = state.isAppending,
-                appendError = state.appendError,
-                endReached = state.endReached,
-                onRetryAppend = onRetryAppend,
+            val footerState = when {
+                state.appendError != null -> AppendFooterState.ERROR
+                state.isAppending -> AppendFooterState.LOADING
+                state.endReached -> AppendFooterState.END_REACHED
+                else -> AppendFooterState.IDLE
+            }
+            val footerTag = when (footerState) {
+                AppendFooterState.ERROR -> MovieReviewsTestTags.APPEND_ERROR
+                AppendFooterState.LOADING -> MovieReviewsTestTags.APPEND_LOADING
+                AppendFooterState.END_REACHED -> MovieReviewsTestTags.END_REACHED
+                AppendFooterState.IDLE -> ""
+            }
+            AppendFooter(
+                state = footerState,
+                errorMessage = state.appendError?.toUserMessage().orEmpty(),
+                onRetry = onRetryAppend,
+                retryModifier = Modifier.testTag(MovieReviewsTestTags.APPEND_RETRY_BUTTON),
+                modifier = Modifier.fillMaxWidth().testTag(footerTag),
             )
         }
-    }
-}
-
-@Composable
-private fun MovieReviewsFooter(
-    isAppending: Boolean,
-    appendError: DomainError?,
-    endReached: Boolean,
-    onRetryAppend: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    when {
-        appendError != null -> Row(
-            modifier = modifier.fillMaxWidth().testTag(MovieReviewsTestTags.APPEND_ERROR),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(text = appendError.toUserMessage(), style = MaterialTheme.typography.bodySmall)
-            Button(onClick = onRetryAppend, modifier = Modifier.testTag(MovieReviewsTestTags.APPEND_RETRY_BUTTON)) {
-                Text(text = "Retry")
-            }
-        }
-
-        isAppending -> Row(
-            modifier = modifier.fillMaxWidth().testTag(MovieReviewsTestTags.APPEND_LOADING),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            CircularProgressIndicator(modifier = Modifier.size(24.dp))
-        }
-
-        endReached -> Text(
-            text = "You've reached the end",
-            style = MaterialTheme.typography.bodySmall,
-            modifier = modifier.fillMaxWidth().testTag(MovieReviewsTestTags.END_REACHED),
-        )
     }
 }

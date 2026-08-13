@@ -27,59 +27,24 @@
         android:paddingTop="8dp"
         android:visibility="gone">
 
-        <include layout="@layout/view_genre_shimmer_row" />
-        <include layout="@layout/view_genre_shimmer_row" />
-        <include layout="@layout/view_genre_shimmer_row" />
-        <include layout="@layout/view_genre_shimmer_row" />
-        <include layout="@layout/view_genre_shimmer_row" />
-        <include layout="@layout/view_genre_shimmer_row" />
+        <include layout="@layout/view_shimmer_list_row" />
+        <include layout="@layout/view_shimmer_list_row" />
+        <include layout="@layout/view_shimmer_list_row" />
+        <include layout="@layout/view_shimmer_list_row" />
+        <include layout="@layout/view_shimmer_list_row" />
+        <include layout="@layout/view_shimmer_list_row" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/genreErrorContainer"
+    <com.movies.anymovies.core.uilegacy.state.ErrorStateView
+        android:id="@+id/genreErrorStateView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp"
-        android:visibility="gone">
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/genreErrorMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="16sp"
-            tools:text="No internet connection. Check your network and try again." />
-
-        <Button
-            android:id="@+id/genreErrorRetryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:text="@string/genre_error_retry" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/genreEmptyContainer"
+    <com.movies.anymovies.core.uilegacy.state.EmptyStateView
+        android:id="@+id/genreEmptyStateView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/genreEmptyMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/genre_empty_title"
-            android:textSize="16sp" />
-
-    </LinearLayout>
+        android:visibility="gone" />
 
 </FrameLayout>

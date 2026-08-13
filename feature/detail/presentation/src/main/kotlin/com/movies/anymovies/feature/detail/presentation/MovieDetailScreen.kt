@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BrokenImage
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +52,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.movies.anymovies.core.common.error.DomainError
 import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.ui.state.ErrorState
+import com.movies.anymovies.core.ui.state.LoadingShimmer
+import com.movies.anymovies.core.ui.state.ShimmerBlock
 import com.movies.anymovies.feature.detail.presentation.model.GenreUiModel
 import com.movies.anymovies.feature.detail.presentation.model.MovieDetailUiModel
 import com.movies.anymovies.feature.detail.presentation.model.VideoUiModel
@@ -128,22 +130,15 @@ internal fun MovieDetailContent(
 @Composable
 private fun MovieDetailLoading(onBack: () -> Unit, modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.LOADING)) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(HeaderHeight)
-                    .background(shimmerColor()),
-            )
+        LoadingShimmer {
+            ShimmerBlock(modifier = Modifier.fillMaxWidth().height(HeaderHeight))
             Spacer(modifier = Modifier.height(16.dp))
             repeat(4) {
-                Box(
+                ShimmerBlock(
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 6.dp)
                         .fillMaxWidth()
-                        .height(16.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(shimmerColor()),
+                        .height(16.dp),
                 )
             }
         }
@@ -152,16 +147,13 @@ private fun MovieDetailLoading(onBack: () -> Unit, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun shimmerColor(): Color = MaterialTheme.colorScheme.surfaceVariant
-
-@Composable
 private fun MovieDetailNotFound(onBack: () -> Unit, modifier: Modifier = Modifier) {
-    MovieDetailMessage(
+    ErrorState(
+        message = DomainError.NotFound.toUserMessage(),
         title = "Movie not found",
-        message = "This movie isn't available anymore.",
         actionLabel = "Back",
         onAction = onBack,
-        modifier = modifier.testTag(MovieDetailTestTags.NOT_FOUND),
+        modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.NOT_FOUND),
     )
 }
 
@@ -173,47 +165,14 @@ private fun MovieDetailError(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    MovieDetailMessage(
-        title = "Something went wrong",
+    ErrorState(
         message = error.toUserMessage(),
+        title = "Something went wrong",
         actionLabel = if (isRetryable) "Retry" else "Back",
         onAction = if (isRetryable) onRetry else onBack,
-        actionTestTag = if (isRetryable) MovieDetailTestTags.RETRY_BUTTON else null,
-        modifier = modifier.testTag(MovieDetailTestTags.ERROR),
+        actionModifier = if (isRetryable) Modifier.testTag(MovieDetailTestTags.RETRY_BUTTON) else Modifier,
+        modifier = modifier.fillMaxSize().testTag(MovieDetailTestTags.ERROR),
     )
-}
-
-@Composable
-private fun MovieDetailMessage(
-    title: String,
-    message: String,
-    actionLabel: String,
-    onAction: () -> Unit,
-    modifier: Modifier = Modifier,
-    actionTestTag: String? = null,
-) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Filled.BrokenImage,
-            contentDescription = null,
-            modifier = Modifier.size(48.dp),
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = title, style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = message, style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onAction,
-            modifier = if (actionTestTag != null) Modifier.testTag(actionTestTag) else Modifier,
-        ) {
-            Text(text = actionLabel)
-        }
-    }
 }
 
 @Composable

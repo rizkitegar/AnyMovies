@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,12 +33,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.movies.anymovies.core.common.error.toUserMessage
+import com.movies.anymovies.core.ui.state.EmptyState
+import com.movies.anymovies.core.ui.state.ErrorState
+import com.movies.anymovies.core.ui.state.LoadingShimmer
+import com.movies.anymovies.core.ui.state.ShimmerBlock
 import com.movies.anymovies.feature.detail.presentation.model.ReviewUiModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 private const val REVIEW_CONTENT_COLLAPSED_MAX_LINES = 6
 private val AvatarSize = 40.dp
+private val ReviewShimmerRowHeight = 56.dp
 
 public object ReviewsSectionTestTags {
     public const val LOADING: String = "reviews_section_loading"
@@ -97,32 +101,29 @@ internal fun ReviewsSectionContent(
 
         when (state) {
             is ReviewsSectionUiState.Loading -> {
-                Text(
-                    text = "Loading reviews…",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.testTag(ReviewsSectionTestTags.LOADING),
-                )
+                LoadingShimmer(modifier = Modifier.testTag(ReviewsSectionTestTags.LOADING)) {
+                    repeat(2) {
+                        ShimmerBlock(modifier = Modifier.fillMaxWidth().height(ReviewShimmerRowHeight))
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
             }
 
             is ReviewsSectionUiState.Empty -> {
-                Text(
-                    text = "No reviews yet",
-                    style = MaterialTheme.typography.bodyMedium,
+                EmptyState(
+                    message = "No reviews yet",
                     modifier = Modifier.testTag(ReviewsSectionTestTags.EMPTY),
                 )
             }
 
             is ReviewsSectionUiState.Error -> {
-                Column(modifier = Modifier.testTag(ReviewsSectionTestTags.ERROR)) {
-                    Text(text = state.error.toUserMessage(), style = MaterialTheme.typography.bodyMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = onRetry,
-                        modifier = Modifier.testTag(ReviewsSectionTestTags.RETRY_BUTTON),
-                    ) {
-                        Text(text = "Retry")
-                    }
-                }
+                ErrorState(
+                    message = state.error.toUserMessage(),
+                    actionLabel = "Retry",
+                    onAction = onRetry,
+                    actionModifier = Modifier.testTag(ReviewsSectionTestTags.RETRY_BUTTON),
+                    modifier = Modifier.testTag(ReviewsSectionTestTags.ERROR),
+                )
             }
 
             is ReviewsSectionUiState.Success -> {

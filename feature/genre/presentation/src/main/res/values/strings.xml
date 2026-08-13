@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="genre_list_title">Genres</string>
-    <string name="genre_error_no_connection">No internet connection. Check your network and try again.</string>
-    <string name="genre_error_timeout">The request took too long. Please try again.</string>
-    <string name="genre_error_unauthorized">We can\'t reach the movie service right now.</string>
-    <string name="genre_error_server">The movie service is having trouble. Try again shortly.</string>
-    <string name="genre_error_parse">Something went wrong loading this content.</string>
-    <string name="genre_error_local_storage">Couldn\'t load saved data.</string>
-    <string name="genre_error_unknown">Something went wrong. Please try again.</string>
-    <string name="genre_error_retry">Retry</string>
     <string name="genre_empty_title">No genres available</string>
     <string name="genre_list_content_description">Genre list</string>
 </resources>

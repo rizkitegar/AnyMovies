@@ -27,6 +27,7 @@ android {
 dependencies {
     implementation(project(":feature:detail:domain"))
     implementation(project(":core:common"))
+    implementation(project(":core:ui"))
     implementation(project(":navigation"))
 
     implementation(libs.kotlinx.coroutines.core)

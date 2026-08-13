@@ -2,26 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp">
+    android:padding="24dp">
 
     <TextView
-        android:id="@+id/movieFooterErrorMessage"
+        android:id="@+id/stateErrorMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="14sp"
-        tools:text="The movie service is having trouble. Try again shortly." />
+        android:textSize="16sp"
+        tools:text="No internet connection. Check your network and try again." />
 
     <Button
-        android:id="@+id/movieFooterErrorRetryButton"
+        android:id="@+id/stateErrorRetryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:minWidth="48dp"
         android:minHeight="48dp"
-        android:text="@string/movie_error_retry" />
+        android:text="@string/core_ui_legacy_retry" />
 
 </LinearLayout>

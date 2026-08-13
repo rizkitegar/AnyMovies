@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.movies.anymovies.core.common.error.toUserMessage
 import com.movies.anymovies.feature.genre.domain.model.Genre
 import com.movies.anymovies.feature.genre.presentation.GenreListUiState
+import com.movies.anymovies.feature.genre.presentation.R
 import com.movies.anymovies.feature.genre.presentation.databinding.ViewGenreListBinding
 
 internal class GenreListCallbacks(
@@ -26,14 +27,13 @@ internal class GenreListViewRenderer(
             setHasFixedSize(true)
         }
         binding.genreSwipeRefresh.setOnRefreshListener { callbacks.onRefresh() }
-        binding.genreErrorRetryButton.setOnClickListener { callbacks.onRetry() }
     }
 
     fun render(state: GenreListUiState) {
         binding.genreShimmerContainer.isVisible = state is GenreListUiState.Loading
         binding.genreSwipeRefresh.isVisible = state is GenreListUiState.Success
-        binding.genreErrorContainer.isVisible = state is GenreListUiState.Error
-        binding.genreEmptyContainer.isVisible = state is GenreListUiState.Empty
+        binding.genreErrorStateView.isVisible = state is GenreListUiState.Error
+        binding.genreEmptyStateView.isVisible = state is GenreListUiState.Empty
 
         when (state) {
             is GenreListUiState.Success -> {
@@ -43,9 +43,17 @@ internal class GenreListViewRenderer(
                 }
             }
             is GenreListUiState.Error -> {
-                binding.genreErrorMessage.text = state.error.toUserMessage()
+                binding.genreErrorStateView.render(
+                    message = state.error.toUserMessage(),
+                    onRetry = callbacks.onRetry,
+                )
             }
-            GenreListUiState.Empty, GenreListUiState.Loading -> Unit
+            GenreListUiState.Empty -> {
+                binding.genreEmptyStateView.render(message = context.getString(R.string.genre_empty_title))
+            }
+            GenreListUiState.Loading -> Unit
         }
     }
+
+    private val context get() = binding.root.context
 }
