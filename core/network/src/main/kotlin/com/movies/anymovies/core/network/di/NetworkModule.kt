@@ -8,7 +8,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-public val networkModule: Module = module {
+val networkModule: Module = module {
     single<OkHttpClient> { createOkHttpClient(androidContext()) }
     single<Retrofit> { createRetrofit(get()) }
 }

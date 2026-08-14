@@ -8,7 +8,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-public fun Throwable.toDomainError(): DomainError {
+fun Throwable.toDomainError(): DomainError {
     return when (this) {
         is SocketTimeoutException -> DomainError.Timeout
         is UnknownHostException, is ConnectException -> DomainError.NoConnection

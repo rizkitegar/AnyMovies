@@ -28,7 +28,7 @@ import com.movies.anymovies.core.ui.R
  * never a raw exception, stack trace, or HTTP code.
  */
 @Composable
-public fun ErrorState(
+fun ErrorState(
     message: String,
     modifier: Modifier = Modifier,
     title: String? = null,

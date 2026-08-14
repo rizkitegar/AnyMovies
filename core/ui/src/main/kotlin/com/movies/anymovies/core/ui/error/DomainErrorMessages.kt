@@ -6,7 +6,7 @@ import com.movies.anymovies.core.common.error.DomainError
 import com.movies.anymovies.core.ui.R
 
 @Composable
-public fun DomainError.toUserMessage(): String {
+fun DomainError.toUserMessage(): String {
     val resId = when (this) {
         DomainError.NoConnection -> R.string.core_ui_error_no_connection
         DomainError.Timeout -> R.string.core_ui_error_timeout

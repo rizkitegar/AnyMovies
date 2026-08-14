@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.movies.anymovies.core.ui.R
 
 /** Endless-scroll footer state, shared by any `LazyColumn`/`RecyclerView` that paginates. */
-public enum class AppendFooterState { IDLE, LOADING, ERROR, END_REACHED }
+enum class AppendFooterState { IDLE, LOADING, ERROR, END_REACHED }
 
 /**
  * Footer row appended to a paginated list: an in-flight spinner while the next page loads,
@@ -27,7 +27,7 @@ public enum class AppendFooterState { IDLE, LOADING, ERROR, END_REACHED }
  * Renders nothing for [AppendFooterState.IDLE].
  */
 @Composable
-public fun AppendFooter(
+fun AppendFooter(
     state: AppendFooterState,
     modifier: Modifier = Modifier,
     errorMessage: String = "",

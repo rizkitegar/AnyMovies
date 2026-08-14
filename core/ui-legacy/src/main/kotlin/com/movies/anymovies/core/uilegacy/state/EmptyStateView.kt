@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import com.movies.anymovies.core.uilegacy.databinding.ViewStateEmptyBinding
 
 /** Empty-result state (not an error): message plus an optional contextual action. */
-public class EmptyStateView @JvmOverloads constructor(
+class EmptyStateView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -16,7 +16,7 @@ public class EmptyStateView @JvmOverloads constructor(
 
     private val binding = ViewStateEmptyBinding.inflate(LayoutInflater.from(context), this, true)
 
-    public fun render(
+    fun render(
         message: String,
         actionLabel: String? = null,
         onAction: (() -> Unit)? = null,

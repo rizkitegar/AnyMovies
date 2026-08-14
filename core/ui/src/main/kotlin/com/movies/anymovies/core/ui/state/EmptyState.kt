@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
  * Empty-result state (not an error): icon, message, and an optional contextual action.
  */
 @Composable
-public fun EmptyState(
+fun EmptyState(
     message: String,
     modifier: Modifier = Modifier,
     title: String? = null,

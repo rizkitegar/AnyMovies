@@ -13,7 +13,7 @@ import com.movies.anymovies.core.uilegacy.databinding.ViewStateErrorBinding
  * come from `DomainError.toUserMessage()` at the call site — never a raw exception, stack
  * trace, or HTTP code.
  */
-public class ErrorStateView @JvmOverloads constructor(
+class ErrorStateView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -21,7 +21,7 @@ public class ErrorStateView @JvmOverloads constructor(
 
     private val binding = ViewStateErrorBinding.inflate(LayoutInflater.from(context), this, true)
 
-    public fun render(
+    fun render(
         message: String,
         retryLabel: String = context.getString(R.string.core_ui_legacy_retry),
         onRetry: (() -> Unit)? = null,

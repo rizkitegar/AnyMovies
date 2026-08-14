@@ -9,7 +9,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
-public fun createOkHttpClient(context: Context): OkHttpClient {
+fun createOkHttpClient(context: Context): OkHttpClient {
     return OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor())
         .addInterceptor(ChuckerInterceptorHolder.get(context))
@@ -17,7 +17,7 @@ public fun createOkHttpClient(context: Context): OkHttpClient {
         .build()
 }
 
-public fun createRetrofit(okHttpClient: OkHttpClient, json: Json = networkJson): Retrofit {
+fun createRetrofit(okHttpClient: OkHttpClient, json: Json = networkJson): Retrofit {
     return Retrofit.Builder()
         .baseUrl(TMDB_BASE_URL)
         .client(okHttpClient)

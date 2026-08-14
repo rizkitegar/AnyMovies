@@ -4,7 +4,7 @@ import android.content.Context
 import com.movies.anymovies.core.common.error.DomainError
 import com.movies.anymovies.core.uilegacy.R
 
-public fun DomainError.toUserMessage(context: Context): String {
+fun DomainError.toUserMessage(context: Context): String {
     val resId = when (this) {
         DomainError.NoConnection -> R.string.core_ui_legacy_error_no_connection
         DomainError.Timeout -> R.string.core_ui_legacy_error_timeout

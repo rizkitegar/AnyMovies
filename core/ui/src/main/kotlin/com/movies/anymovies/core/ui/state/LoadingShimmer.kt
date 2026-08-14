@@ -30,7 +30,7 @@ private const val SHIMMER_TRAVEL = 400f
  * shape using [ShimmerBlock] children so the placeholder matches the real content.
  */
 @Composable
-public fun LoadingShimmer(
+fun LoadingShimmer(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -42,7 +42,7 @@ public fun LoadingShimmer(
  * while real content loads.
  */
 @Composable
-public fun ShimmerBlock(
+fun ShimmerBlock(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(4.dp),
 ) {

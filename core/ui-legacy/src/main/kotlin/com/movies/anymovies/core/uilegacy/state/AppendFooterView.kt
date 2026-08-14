@@ -11,7 +11,7 @@ import com.movies.anymovies.core.uilegacy.databinding.ViewAppendFooterBinding
  * Footer appended to a paginated list: an in-flight spinner while the next page loads, a
  * retry row if the append failed, or an end-of-list message once the last page is loaded.
  */
-public class AppendFooterView @JvmOverloads constructor(
+class AppendFooterView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -19,7 +19,7 @@ public class AppendFooterView @JvmOverloads constructor(
 
     private val binding = ViewAppendFooterBinding.inflate(LayoutInflater.from(context), this, true)
 
-    public fun render(
+    fun render(
         state: AppendFooterState,
         errorMessage: String = "",
         onRetry: (() -> Unit)? = null,
