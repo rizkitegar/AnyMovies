@@ -29,7 +29,6 @@ dependencies {
     implementation(project(":feature:movies:domain"))
     implementation(project(":core:ui"))
     implementation(project(":core:ui-legacy"))
-    implementation(project(":core:designsystem"))
     implementation(project(":navigation"))
     implementation(project(":core:common"))
 
