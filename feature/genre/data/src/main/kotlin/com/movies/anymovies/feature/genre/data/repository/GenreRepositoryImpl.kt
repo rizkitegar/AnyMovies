@@ -10,6 +10,8 @@ import com.movies.anymovies.feature.genre.data.remote.GenreApi
 import com.movies.anymovies.feature.genre.domain.model.Genre
 import com.movies.anymovies.feature.genre.domain.repository.GenreRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
@@ -39,7 +41,7 @@ internal class GenreRepositoryImpl(
 
         emitAll(genreDao.observeAll().map { entities -> Result.Success(entities.map { it.toDomain() }) })
     }.catch { e ->
-        if (e is CancellationException) throw e
+        if (e is CancellationException && currentCoroutineContext()[Job]?.isActive != true) throw e
         emit(Result.Error(e.toDomainError()))
     }
 

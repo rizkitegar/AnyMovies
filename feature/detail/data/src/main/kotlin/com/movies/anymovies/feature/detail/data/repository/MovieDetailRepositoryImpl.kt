@@ -13,6 +13,8 @@ import com.movies.anymovies.feature.detail.domain.model.MovieDetail
 import com.movies.anymovies.feature.detail.domain.repository.MovieDetailRepository
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -58,7 +60,7 @@ internal class MovieDetailRepositoryImpl(
             },
         )
     }.catch { e ->
-        if (e is CancellationException) throw e
+        if (e is CancellationException && currentCoroutineContext()[Job]?.isActive != true) throw e
         emit(Result.Error(e.toDomainError()))
     }
 

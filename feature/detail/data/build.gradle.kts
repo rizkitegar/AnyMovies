@@ -21,6 +21,11 @@ android {
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
+            it.javaLauncher.set(
+                javaToolchains.launcherFor {
+                    languageVersion.set(JavaLanguageVersion.of(17))
+                },
+            )
         }
     }
 }
@@ -44,6 +49,7 @@ dependencies {
     testImplementation(libs.retrofit.kotlinx.serialization.converter)
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.androidx.sqlite.bundled)
+    testImplementation(libs.sqliteBundledJvm)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.paging.testing)
