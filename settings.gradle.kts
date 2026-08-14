@@ -30,7 +30,6 @@ include(":core:network")
 include(":core:database")
 include(":core:ui")
 include(":core:ui-legacy")
-include(":core:testing")
 
 include(":navigation")
 
