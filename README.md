@@ -111,4 +111,12 @@ Open the project in Android Studio and let Gradle sync, or from the command line
 ./gradlew test               # unit tests across all modules
 ```
 
+## 📎 Reference Documentation
+
+| Type | Link | Size |
+|---|---|---|
+| Debug APK | [Download](https://drive.google.com/uc?export=download&id=1mThBIuVecvTjK144A90qzoGaYLE4G6fb) | 24M |
+| Release APK | [Download](https://drive.google.com/uc?export=download&id=1OJL2UFc4I4lAzOk1yrkrbnkYd6ezR094) | 15M |
+| Recording | [View](https://drive.google.com/file/d/1TPAwAFFJayyr5BN4EZxNUgYmOxDEm9NT/view) | |
+
 ---
