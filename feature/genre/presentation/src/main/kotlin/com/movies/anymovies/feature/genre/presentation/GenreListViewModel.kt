@@ -14,12 +14,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalCoroutinesApi::class)
-public class GenreListViewModel(
+class GenreListViewModel(
     private val getGenresUseCase: GetGenresUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<GenreListUiState>(GenreListUiState.Loading)
-    public val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val reloadSignal = MutableSharedFlow<Unit>(replay = 1)
 
@@ -31,7 +31,7 @@ public class GenreListViewModel(
             .launchIn(viewModelScope)
     }
 
-    public fun onRetry() {
+    fun onRetry() {
         _uiState.value = GenreListUiState.Loading
         reloadSignal.tryEmit(Unit)
     }

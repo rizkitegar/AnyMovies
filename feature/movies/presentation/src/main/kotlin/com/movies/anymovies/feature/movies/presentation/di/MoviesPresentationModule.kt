@@ -5,7 +5,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-public val moviesPresentationModule: Module = module {
+val moviesPresentationModule: Module = module {
     viewModel { params ->
         MovieListViewModel(
             genreId = params.get(),

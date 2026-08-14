@@ -18,14 +18,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-public class MovieListViewModel(
+class MovieListViewModel(
     private val genreId: Int,
     private val discoverMoviesUseCase: DiscoverMoviesUseCase,
     private val loadNextMoviesPageUseCase: LoadNextMoviesPageUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MovieListUiState>(MovieListUiState.Loading)
-    public val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val reloadSignal = MutableSharedFlow<Unit>(replay = 1)
 
@@ -37,12 +37,12 @@ public class MovieListViewModel(
             .launchIn(viewModelScope)
     }
 
-    public fun onRetry() {
+    fun onRetry() {
         _uiState.value = MovieListUiState.Loading
         reloadSignal.tryEmit(Unit)
     }
 
-    public fun loadNextPage() {
+    fun loadNextPage() {
         val current = _uiState.value
         if (current !is MovieListUiState.Success) return
         if (current.isAppending || current.endReached) return
@@ -58,7 +58,7 @@ public class MovieListViewModel(
         }
     }
 
-    public fun onRetryAppend() {
+    fun onRetryAppend() {
         val current = _uiState.value
         if (current !is MovieListUiState.Success || current.appendError == null) return
         loadNextPage()

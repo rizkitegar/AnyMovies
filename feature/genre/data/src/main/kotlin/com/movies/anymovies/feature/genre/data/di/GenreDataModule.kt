@@ -9,7 +9,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-public val genreDataModule: Module = module {
+val genreDataModule: Module = module {
     single<GenreApi> { get<Retrofit>().create(GenreApi::class.java) }
     single { get<AppDatabase>().genreDao() }
     single<GenreRepository> {

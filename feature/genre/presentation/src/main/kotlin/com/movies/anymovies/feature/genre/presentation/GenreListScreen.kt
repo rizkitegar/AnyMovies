@@ -17,7 +17,7 @@ import com.movies.anymovies.feature.genre.presentation.ui.GenreListViewRenderer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-public fun GenreListScreen(
+fun GenreListScreen(
     onGenreClick: (genreId: Int, genreName: String) -> Unit,
     modifier: Modifier = Modifier,
     onContentReady: () -> Unit = {},

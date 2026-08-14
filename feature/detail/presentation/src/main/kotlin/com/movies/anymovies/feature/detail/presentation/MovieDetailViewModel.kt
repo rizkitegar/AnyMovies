@@ -16,13 +16,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalCoroutinesApi::class)
-public class MovieDetailViewModel(
+class MovieDetailViewModel(
     private val movieId: Int,
     private val getMovieDetailUseCase: GetMovieDetailUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MovieDetailUiState>(MovieDetailUiState.Loading)
-    public val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val reloadSignal = MutableSharedFlow<Unit>(replay = 1)
 
@@ -34,7 +34,7 @@ public class MovieDetailViewModel(
             .launchIn(viewModelScope)
     }
 
-    public fun onRetry() {
+    fun onRetry() {
         _uiState.value = MovieDetailUiState.Loading
         reloadSignal.tryEmit(Unit)
     }

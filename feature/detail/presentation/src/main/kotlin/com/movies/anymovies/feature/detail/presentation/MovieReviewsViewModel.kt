@@ -11,12 +11,12 @@ import com.movies.anymovies.feature.detail.presentation.model.toUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-public class MovieReviewsViewModel(
+class MovieReviewsViewModel(
     movieId: Int,
     getReviewsUseCase: GetReviewsUseCase,
 ) : ViewModel() {
 
-    public val reviewsPagingData: Flow<PagingData<ReviewUiModel>> =
+    val reviewsPagingData: Flow<PagingData<ReviewUiModel>> =
         getReviewsUseCase(movieId)
             .map { pagingData -> pagingData.map { review -> review.toUiModel() } }
             .cachedIn(viewModelScope)

@@ -86,34 +86,34 @@ private const val HEADER_COLLAPSE_RANGE_PX = 400f
 private const val OVERVIEW_COLLAPSED_MAX_LINES = 5
 private const val REVIEW_CONTENT_COLLAPSED_MAX_LINES = 6
 
-public object MovieDetailTestTags {
-    public const val LOADING: String = "movie_detail_loading"
-    public const val ERROR: String = "movie_detail_error"
-    public const val NOT_FOUND: String = "movie_detail_not_found"
-    public const val SUCCESS: String = "movie_detail_success"
-    public const val RETRY_BUTTON: String = "movie_detail_retry"
-    public const val BACK_BUTTON: String = "movie_detail_back"
-    public const val OVERVIEW_TOGGLE: String = "movie_detail_overview_toggle"
-    public const val CONTENT_LIST: String = "movie_detail_content_list"
-    public const val REVIEWS_HEADER: String = "movie_detail_reviews_header"
-    public const val REVIEWS_LOADING: String = "movie_detail_reviews_loading"
-    public const val REVIEWS_ERROR: String = "movie_detail_reviews_error"
-    public const val REVIEWS_RETRY_BUTTON: String = "movie_detail_reviews_retry"
-    public const val REVIEWS_EMPTY: String = "movie_detail_reviews_empty"
-    public const val REVIEWS_APPEND_LOADING: String = "movie_detail_reviews_append_loading"
-    public const val REVIEWS_APPEND_ERROR: String = "movie_detail_reviews_append_error"
-    public const val REVIEWS_APPEND_RETRY_BUTTON: String = "movie_detail_reviews_append_retry"
-    public const val REVIEWS_END_REACHED: String = "movie_detail_reviews_end_reached"
+object MovieDetailTestTags {
+    const val LOADING: String = "movie_detail_loading"
+    const val ERROR: String = "movie_detail_error"
+    const val NOT_FOUND: String = "movie_detail_not_found"
+    const val SUCCESS: String = "movie_detail_success"
+    const val RETRY_BUTTON: String = "movie_detail_retry"
+    const val BACK_BUTTON: String = "movie_detail_back"
+    const val OVERVIEW_TOGGLE: String = "movie_detail_overview_toggle"
+    const val CONTENT_LIST: String = "movie_detail_content_list"
+    const val REVIEWS_HEADER: String = "movie_detail_reviews_header"
+    const val REVIEWS_LOADING: String = "movie_detail_reviews_loading"
+    const val REVIEWS_ERROR: String = "movie_detail_reviews_error"
+    const val REVIEWS_RETRY_BUTTON: String = "movie_detail_reviews_retry"
+    const val REVIEWS_EMPTY: String = "movie_detail_reviews_empty"
+    const val REVIEWS_APPEND_LOADING: String = "movie_detail_reviews_append_loading"
+    const val REVIEWS_APPEND_ERROR: String = "movie_detail_reviews_append_error"
+    const val REVIEWS_APPEND_RETRY_BUTTON: String = "movie_detail_reviews_append_retry"
+    const val REVIEWS_END_REACHED: String = "movie_detail_reviews_end_reached"
 
-    public fun reviewItem(id: String): String = "movie_detail_review_item_$id"
-    public fun reviewRatingChip(id: String): String = "movie_detail_review_rating_$id"
-    public fun reviewContentToggle(id: String): String = "movie_detail_review_toggle_$id"
+    fun reviewItem(id: String): String = "movie_detail_review_item_$id"
+    fun reviewRatingChip(id: String): String = "movie_detail_review_rating_$id"
+    fun reviewContentToggle(id: String): String = "movie_detail_review_toggle_$id"
 }
 
 private fun Throwable.toReviewDomainError(): DomainError = (this as? ReviewLoadException)?.domainError ?: DomainError.Unknown
 
 @Composable
-public fun MovieDetailScreen(
+fun MovieDetailScreen(
     movieId: Int,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,

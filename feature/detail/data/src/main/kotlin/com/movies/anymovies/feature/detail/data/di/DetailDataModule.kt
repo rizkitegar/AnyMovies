@@ -14,7 +14,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-public val detailDataModule: Module = module {
+val detailDataModule: Module = module {
     single<MovieDetailApi> { get<Retrofit>().create(MovieDetailApi::class.java) }
     single { get<AppDatabase>().movieDetailDao() }
     single<MovieDetailRepository> {

@@ -3,7 +3,7 @@ package com.movies.anymovies.feature.movies.presentation.model
 import com.movies.anymovies.feature.movies.domain.model.Movie
 import java.util.Locale
 
-public data class MovieUiModel(
+data class MovieUiModel(
     val id: Int,
     val title: String,
     val posterUrl: String?,

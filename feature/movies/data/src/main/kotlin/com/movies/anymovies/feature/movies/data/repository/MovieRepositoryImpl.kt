@@ -125,9 +125,8 @@ internal class MovieRepositoryImpl(
     }
 
     private fun buildPagedResult(entities: List<MovieEntity>, key: MovieRemoteKeyEntity?): PagedResult<Movie> {
-        val distinctMovies = entities.distinctBy { it.id }.map { it.toDomain() }
         return PagedResult(
-            items = distinctMovies,
+            items = entities.map { it.toDomain() },
             page = key?.page ?: 0,
             totalPages = key?.totalPages ?: 0,
             totalResults = key?.totalResults ?: 0,

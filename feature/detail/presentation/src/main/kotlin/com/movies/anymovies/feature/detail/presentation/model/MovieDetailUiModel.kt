@@ -11,13 +11,13 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
-public data class GenreUiModel(
+data class GenreUiModel(
     val id: Int,
     val name: String,
 )
 
 @Immutable
-public data class VideoUiModel(
+data class VideoUiModel(
     val id: String,
     val key: String,
     val name: String,
@@ -25,7 +25,7 @@ public data class VideoUiModel(
 )
 
 @Immutable
-public data class MovieDetailUiModel(
+data class MovieDetailUiModel(
     val id: Int,
     val title: String,
     val tagline: String?,
@@ -50,7 +50,7 @@ private const val NO_SYNOPSIS_LABEL = "No synopsis available"
 
 private val selectTrailerUseCase = SelectTrailerUseCase()
 
-public fun MovieDetail.toUiModel(): MovieDetailUiModel {
+fun MovieDetail.toUiModel(): MovieDetailUiModel {
     val youtubeVideos = videos.filter { it.site == "YouTube" }
     return MovieDetailUiModel(
         id = id,

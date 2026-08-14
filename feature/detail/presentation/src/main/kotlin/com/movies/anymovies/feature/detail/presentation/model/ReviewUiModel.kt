@@ -12,7 +12,7 @@ private val reviewDateFormatter: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d MMM uuuu", Locale.US).withZone(ZoneOffset.UTC)
 
 @Immutable
-public data class ReviewUiModel(
+data class ReviewUiModel(
     val id: String,
     val author: String,
     val avatarUrl: String?,
@@ -22,7 +22,7 @@ public data class ReviewUiModel(
     val content: String,
 )
 
-public fun Review.toUiModel(): ReviewUiModel = ReviewUiModel(
+fun Review.toUiModel(): ReviewUiModel = ReviewUiModel(
     id = id,
     author = author,
     avatarUrl = avatarUrl,

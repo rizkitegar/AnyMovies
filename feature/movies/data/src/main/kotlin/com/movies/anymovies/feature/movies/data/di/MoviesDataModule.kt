@@ -10,7 +10,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-public val moviesDataModule: Module = module {
+val moviesDataModule: Module = module {
     single<DiscoverMovieApi> { get<Retrofit>().create(DiscoverMovieApi::class.java) }
     single { get<AppDatabase>().movieDao() }
     single<MovieRepository> {

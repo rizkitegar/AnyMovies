@@ -17,7 +17,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-public fun MovieListScreen(
+fun MovieListScreen(
     genreId: Int,
     genreName: String,
     onMovieClick: (movieId: Int) -> Unit,

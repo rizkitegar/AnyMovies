@@ -35,9 +35,9 @@ import coil3.compose.AsyncImage
 import com.movies.anymovies.feature.detail.presentation.model.VideoUiModel
 import kotlinx.collections.immutable.ImmutableList
 
-public object VideoSectionTestTags {
-    public const val PLAY_BUTTON: String = "video_section_play_button"
-    public const val THUMBNAIL_ROW: String = "video_section_thumbnail_row"
+object VideoSectionTestTags {
+    const val PLAY_BUTTON: String = "video_section_play_button"
+    const val THUMBNAIL_ROW: String = "video_section_thumbnail_row"
 }
 
 @Composable
